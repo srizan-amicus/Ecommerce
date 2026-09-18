@@ -1,0 +1,269 @@
+/*global*/
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #333;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+
+/*products section*/
+
+.products-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 20px 40px;
+  box-sizing: border-box;
+}
+
+.products-section h1 {
+  text-align: center;
+  font-family: Impact, "Arial Narrow", Arial, sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 0 0 42px;
+  color: #050505;
+  text-transform: uppercase;
+}
+
+
+/*product grid*/
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+
+/*product card*/
+
+.product-card {
+  background-color: #ffffff;
+  border: 1px solid #eeeeee;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/*product image*/
+
+.product-image-container {
+  width: 100%;
+  height: 220px;
+  background-color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+/*product information*/
+
+.product-info {
+  padding: 18px 28px 32px;
+  text-align: center;
+}
+
+.product-category {
+  display: none;
+}
+
+.product-name {
+  margin: 0 auto 8px;
+  color: #ff4b0b;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 800;
+  text-transform: uppercase;
+  min-height: 48px;
+}
+
+.product-rating {
+  margin: 0 0 24px;
+  color: #333;
+  font-size: 14px;
+}
+
+
+/*price*/
+
+.product-price {
+  margin: 0 0 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+
+/*add to cart*/
+
+.add-to-cart {
+  width: 100%;
+  padding: 14px 10px;
+  border: none;
+  border-radius: 0;
+  background-color: #ff4b0b;
+  color: #ffffff;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease;
+}
+
+.add-to-cart:hover {
+  background-color: #e94308;
+}
+
+
+/*tablet*/
+
+@media (max-width: 1000px) {
+  .products-section {
+    padding: 30px 20px;
+  }
+
+  .products-section h1 {
+    font-size: 34px;
+    margin-bottom: 32px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+
+/*mobile*/
+
+@media (max-width: 600px) {
+  .products-section {
+    padding: 24px 16px;
+  }
+
+  .products-section h1 {
+    font-size: 30px;
+    margin-bottom: 28px;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .product-image-container {
+    height: 240px;
+  }
+
+  .product-info {
+    padding: 18px 24px 28px;
+  }
+}
+
+/*product sku*/
+
+.product-sku {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #555;
+}
+
+
+/*rating*/
+
+.product-rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+}
+
+.stars {
+  font-size: 22px;
+  letter-spacing: -2px;
+  color: #ff4b0b;
+}
+
+.rating-value {
+  font-size: 14px;
+  color: #333;
+}
+
+
+/*quantity*/
+
+.quantity-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.quantity-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #777;
+}
+
+.quantity-container input {
+  width: 76px;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px solid #d5dbe1;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+}
+
+
+/*shopping list*/
+
+.shopping-list {
+  width: 100%;
+  margin-top: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ff4b0b;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.shopping-list:hover {
+  background: transparent;
+  color: #e94308;
+}
