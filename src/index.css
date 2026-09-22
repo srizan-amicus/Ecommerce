@@ -1,3 +1,4 @@
+@import "tailwindcss";
 /*global*/
 
 body {
@@ -10,7 +11,6 @@ body {
 #root {
   min-height: 100vh;
 }
-
 
 /*products section*/
 
@@ -33,7 +33,6 @@ body {
   text-transform: uppercase;
 }
 
-
 /*product grid*/
 
 .product-grid {
@@ -42,7 +41,6 @@ body {
   gap: 14px;
   width: 100%;
 }
-
 
 /*product card*/
 
@@ -59,7 +57,6 @@ body {
 .product-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
-
 
 /*product image*/
 
@@ -78,7 +75,6 @@ body {
   height: 100%;
   object-fit: contain;
 }
-
 
 /*product information*/
 
@@ -108,7 +104,6 @@ body {
   font-size: 14px;
 }
 
-
 /*price*/
 
 .product-price {
@@ -117,7 +112,6 @@ body {
   font-weight: 700;
   color: #333;
 }
-
 
 /*add to cart*/
 
@@ -140,7 +134,6 @@ body {
   background-color: #e94308;
 }
 
-
 /*tablet*/
 
 @media (max-width: 1000px) {
@@ -158,7 +151,6 @@ body {
     gap: 20px;
   }
 }
-
 
 /*mobile*/
 
@@ -195,7 +187,6 @@ body {
   color: #555;
 }
 
-
 /*rating*/
 
 .product-rating {
@@ -216,7 +207,6 @@ body {
   font-size: 14px;
   color: #333;
 }
-
 
 /*quantity*/
 
@@ -246,7 +236,6 @@ body {
   background-color: #fff;
 }
 
-
 /*shopping list*/
 
 .shopping-list {
@@ -266,4 +255,35 @@ body {
 .shopping-list:hover {
   background: transparent;
   color: #e94308;
+}
+
+/* Quick Links */
+
+.quick-link-card > div {
+  height: auto;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.quick-link-card h3 {
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+.quick-link-card h3 + div {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.quick-link-card .quick-link-button {
+  width: 100% !important;
+  height: 2.75rem !important;
+  min-width: 0 !important;
+  font-size: 0.625rem !important;
+  line-height: 1.2 !important;
+  padding: 0.75rem 0.875rem !important;
 }
