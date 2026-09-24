@@ -98,7 +98,7 @@ function QuantitySelector({
         max={max}
         onChange={handleInputChange}
         onBlur={finalizeInputValue}
-        className="h-7 w-12 border border-gray-300 bg-white px-1 text-center text-sm outline-none"
+        className="w-14 border-y border-gray-300 text-center outline-none"
       />
 
       <button

@@ -13,7 +13,7 @@ function Button({
   onClick,
   className = "",
 }: ButtonProps) {
-  const baseStyles = "w-64 h-16 font-bold text-lg transition";
+  const baseStyles = "w-48 h-12 font-bold text-base transition";
 
   const variantStyles = {
     primary: "bg-orange-500 text-white hover:bg-orange-600",
@@ -23,7 +23,6 @@ function Button({
       "bg-white text-orange-600 border-2 border-orange-500 hover:bg-orange-500 hover:text-white",
     danger: "bg-red-700 text-white hover:bg-red-800",
   };
-
   return (
     <button
       className={`${baseStyles} ${variantStyles[variant]} ${className} ${

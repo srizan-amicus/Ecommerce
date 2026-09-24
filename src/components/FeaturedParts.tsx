@@ -2,14 +2,34 @@ import { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
-
 import ProductCard from "./ProductCards";
-import { products } from "../pages/Products";
-
+import products from "../data/products";
 import "swiper/css";
+import { useEffect, useState } from "react";
+import type { Product } from "../types/product";
+import { fetchProductsFromApi } from "../api/productsApi";
 
 function FeaturedParts() {
   const swiperRef = useRef<SwiperType | null>(null);
+  const [apiProducts, setApiProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const fetchedProducts = await fetchProductsFromApi();
+        setApiProducts(fetchedProducts);
+      } catch {
+        console.error("Could not load API products");
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+const allProducts = [
+  ...products,
+  ...apiProducts,
+];
 
   return (
     <section className="bg-gray-50 py-10">
@@ -58,7 +78,7 @@ function FeaturedParts() {
                 },
               }}
             >
-              {products.map((product) => (
+              {allProducts.map((product) => (
                 <SwiperSlide key={product.id}>
                   <ProductCard product={product} />
                 </SwiperSlide>

@@ -1,92 +1,112 @@
+import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCards";
 import type { Product } from "../types/product";
-
-export const products: Product[] = [
-  {
-    id: 1,
-    name: "Microsoft Surface Laptop 4",
-    price: 79999,
-    imageUrl:
-      "https://images.unsplash.com/photo-1648197395199-e7f8d3dd0a3c?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3VyZmFjZSUyMGxhcHRvcHxlbnwwfHwwfHx8MA%3D%3D",
-    category: "Electronics",
-    rating: 4.5,
-  },
-  {
-    id: 2,
-    name: "Wireless Headphones",
-    price: 4299,
-    imageUrl:
-      "https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8SGVhcGhvbmVzJTIwd2lyZWxlc3N8ZW58MHx8MHx8fDA%3D",
-    category: "Audio",
-    rating: 4.7,
-  },
-  {
-    id: 3,
-    name: "Smartwatch",
-    price: 799,
-    imageUrl:
-      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8c21hcnR3YXRjaHxlbnwwfHwwfHx8MA%3D%3D",
-    category: "Wearables",
-    rating: 4.3,
-  },
-  {
-    id: 4,
-    name: "Iphone 17 Pro",
-    price: 99999,
-    imageUrl:
-      "https://images.unsplash.com/photo-1710023038502-ba80a70a9f53?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzB8fElwaG9uZSUyMDE3fGVufDB8fDB8fHww",
-    category: "Electronics",
-    rating: 4.6,
-  },
-  {
-    id: 5,
-    name: "Bluetooth Speaker",
-    price: 2999,
-    imageUrl:
-      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=700",
-    category: "Audio",
-    rating: 4.4,
-  },
-  {
-    id: 6,
-    name: "Fitness Band",
-    price: 1999,
-    imageUrl:
-      "https://images.unsplash.com/photo-1576243345690-4e4b79b63288?w=700",
-    category: "Wearables",
-    rating: 4.2,
-  },
-  {
-    id: 7,
-    name: "Portable Charger",
-    price: 299.99,
-    imageUrl: "https://images.unsplash.com/photo-1731616103600-3fe7ccdc5a59?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2hhcmdlcnxlbnwwfHwwfHx8MA%3D%3D",
-    category: "Accessories",
-    rating: 4.2,
-  },
-  {
-    id: 8,
-    name: "LED Desk Lamp",
-    price: 1449.99,
-    imageUrl: "https://images.unsplash.com/photo-1753932847231-7949af383b98?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8ZGVzayUyMGxhbXB8ZW58MHx8MHx8fDA%3D",
-    category: "Home & Garden",
-    rating: 4.1,
-  },
-];
+import { fetchProductsFromApi } from "../api/productsApi";
+import products from "../data/products";
+import ProductSkeleton from "../components/ProductSkeleton";
+import Button from "../components/Button";
 
 function Products() {
+  const [apiProducts, setApiProducts] = useState<Product[]>([]);
+
+  // UI states
+  const [loading, setLoading] = useState(true);
+
+  // Error handling
+  const [error, setError] = useState<string | null>(null);
+
+  // api fetching
+  const fetchProducts = async (signal?: AbortSignal) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+     const transformedProducts = await fetchProductsFromApi(signal);
+
+if (signal?.aborted) {
+  return;
+}
+
+setApiProducts(transformedProducts);
+    } catch (err) {
+      // ignore intentional request cancellation
+      if (err instanceof DOMException && err.name === "AbortError") {
+        return;
+      }
+
+      setError("Could not load more products. Please try again.");
+    } finally {
+      // don't change loading state for an cancelled request
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchProducts(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  // Combining static products and API products
+  const allProducts = [
+    ...products.map((product) => ({
+      product,
+      source: "static",
+    })),
+    ...apiProducts.map((product) => ({
+      product,
+      source: "api",
+    })),
+  ];
+
   return (
     <div className="products-section">
-      <h1>Featured Products</h1>
+      <div className="flex items-center justify-between">
+        <h1>Featured Products</h1>
 
-      <div className="product-grid">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-          />
-        ))}
+        <Button variant="primary"
+          onClick={() => fetchProducts()}
+          disabled={loading}
+          className="rounded bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loading ? "Refreshing..." : "Refresh"}
+        </Button>
       </div>
+
+      {loading && (
+        <div className="product-grid">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <ProductSkeleton key={index} />
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <div className="flex flex-col items-center justify-center py-10">
+          <p className="text-sm text-red-500">{error}</p>
+
+          <Button variant="primary"
+            onClick={() => fetchProducts()}
+            className="mt-3 rounded bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600"
+          >
+            Try Again
+          </Button>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="product-grid">
+          {allProducts.map(({ product, source }) => (
+            <ProductCard key={`${source}-${product.id}`} product={product} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

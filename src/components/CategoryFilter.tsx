@@ -1,45 +1,30 @@
 interface CategoryFilterProps {
   categories: string[];
-  selectedCategory: string;
+  selectedCategories: string[];
   onCategoryChange: (category: string) => void;
 }
 
 function CategoryFilter({
   categories,
-  selectedCategory,
+  selectedCategories,
   onCategoryChange,
 }: CategoryFilterProps) {
   return (
-    <div className="mt-2">
-      {/* All Categories */}
-      <button
-        onClick={() => onCategoryChange("All")}
-        className="block text-xs text-gray-500 mb-2"
-      >
-        <input
-          type="checkbox"
-          checked={selectedCategory === "All"}
-          readOnly
-          className="mr-2"
-        />
-        All
-      </button>
-
-      {/* Categories */}
+    <div className="space-y-2">
       {categories.map((category) => (
-        <button
+        <label
           key={category}
-          onClick={() => onCategoryChange(category)}
-          className="block text-xs text-gray-500 mb-2"
+          className="flex cursor-pointer items-center gap-2 text-xs text-gray-600 transition-colors hover:text-gray-900"
         >
           <input
             type="checkbox"
-            checked={selectedCategory === category}
-            readOnly
-            className="mr-2"
+            checked={selectedCategories.includes(category)}
+            onChange={() => onCategoryChange(category)}
+            className="h-4 w-4 cursor-pointer accent-orange-500"
           />
-          {category}
-        </button>
+
+          <span>{category}</span>
+        </label>
       ))}
     </div>
   );
