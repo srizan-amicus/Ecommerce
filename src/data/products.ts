@@ -14,6 +14,7 @@ export const products: Product[] = [
     id: 2,
     name: "Wireless Headphones",
     price: 4299,
+    originalPrice: 4999,
     imageUrl:
       "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8aGVhZHBob25lfGVufDB8fDB8fHww",
     category: "Audio",
@@ -23,6 +24,7 @@ export const products: Product[] = [
     id: 3,
     name: "Smartwatch",
     price: 799,
+    isNew: true,
     imageUrl:
       "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8c21hcnR3YXRjaHxlbnwwfHwwfHx8MA%3D%3D",
     category: "Wearables",

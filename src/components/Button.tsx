@@ -1,5 +1,7 @@
+import { ButtonVariant } from "../enums/button";
+
 interface ButtonProps {
-  variant?: "primary" | "secondary" | "outline" | "danger";
+  variant?: ButtonVariant;
   children: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;
@@ -16,12 +18,15 @@ function Button({
   const baseStyles = "w-48 h-12 font-bold text-base transition";
 
   const variantStyles = {
-    primary: "bg-orange-500 text-white hover:bg-orange-600",
-    secondary:
+    [ButtonVariant.Primary]: "bg-orange-500 text-white hover:bg-orange-600",
+
+    [ButtonVariant.Secondary]:
       "bg-white text-gray-800 border-2 border-gray-500 hover:bg-gray-100",
-    outline:
+
+    [ButtonVariant.Outline]:
       "bg-white text-orange-600 border-2 border-orange-500 hover:bg-orange-500 hover:text-white",
-    danger: "bg-red-700 text-white hover:bg-red-800",
+
+    [ButtonVariant.Danger]: "bg-red-700 text-white hover:bg-red-800",
   };
   return (
     <button

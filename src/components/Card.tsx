@@ -4,6 +4,7 @@ interface CardProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
+  buttonVariant?: "primary" | "secondary" | "outline" | "danger";
 }
 
 function Card({

@@ -26,21 +26,14 @@ function FeaturedParts() {
     loadProducts();
   }, []);
 
-const allProducts = [
-  ...products,
-  ...apiProducts,
-];
+  const allProducts = [...products, ...apiProducts];
 
   return (
     <section className="bg-gray-50 py-10">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Heading */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Featured Parts</h2>
-
-          <button className="text-sm text-orange-600 font-semibold hover:text-orange-700">
-            VIEW ALL PRODUCTS →
-          </button>
         </div>
 
         {/* Carousel */}

@@ -21,13 +21,13 @@ function Products() {
     setError(null);
 
     try {
-     const transformedProducts = await fetchProductsFromApi(signal);
+      const transformedProducts = await fetchProductsFromApi(signal);
 
-if (signal?.aborted) {
-  return;
-}
+      if (signal?.aborted) {
+        return;
+      }
 
-setApiProducts(transformedProducts);
+      setApiProducts(transformedProducts);
     } catch (err) {
       // ignore intentional request cancellation
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -67,18 +67,18 @@ setApiProducts(transformedProducts);
 
   return (
     <div className="products-section">
-      <div className="flex items-center justify-between">
-        <h1>Featured Products</h1>
+      <div className="flex h-12 items-center justify-between mt-8">
+        <h1 className="!m-0 !p-0 text-2xl leading-none">Featured Products</h1>
 
-        <Button variant="primary"
+        <Button
+          variant="primary"
           onClick={() => fetchProducts()}
           disabled={loading}
-          className="rounded bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+          className="!m-0 rounded bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Refreshing..." : "Refresh"}
         </Button>
       </div>
-
       {loading && (
         <div className="product-grid">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -91,7 +91,8 @@ setApiProducts(transformedProducts);
         <div className="flex flex-col items-center justify-center py-10">
           <p className="text-sm text-red-500">{error}</p>
 
-          <Button variant="primary"
+          <Button
+            variant="primary"
             onClick={() => fetchProducts()}
             className="mt-3 rounded bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600"
           >

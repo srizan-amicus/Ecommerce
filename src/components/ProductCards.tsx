@@ -2,17 +2,26 @@ import { useState } from "react";
 import type { Product } from "../types/product";
 import QuantitySelector from "./QuantitySelector";
 import Button from "./Button";
+import { ButtonVariant } from "../enums/button";
+import { ProductCardVariant } from "../enums/product";
 
 interface ProductCardProps {
   product: Product;
-  variant?: "default" | "listing";
+  variant?: ProductCardVariant;
 }
 
 function ProductCard({ product, variant = "default" }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const total = product.price * quantity;
 
-  const isListing = variant === "listing";
+ const isListing = variant === ProductCardVariant.Listing;
+
+  //sale and new price
+  const isSale =
+    product.originalPrice !== undefined &&
+    product.originalPrice > product.price;
+
+  const isNew = product.isNew === true;
 
   return (
     <article
@@ -22,24 +31,34 @@ function ProductCard({ product, variant = "default" }: ProductCardProps) {
           : "product-card"
       }
     >
-     {/* Product Image */}
-<div
-  className={
-    isListing
-      ? "flex h-40 items-center justify-center overflow-hidden rounded-md bg-gray-50 p-3"
-      : "product-image-container"
-  }
->
-  <img
-    src={product.imageUrl}
-    alt={product.name}
-    className={
-      isListing
-        ? "h-full w-full object-contain"
-        : "product-image"
-    }
-  />
-</div>
+      {/* Product Image */}
+      <div
+        className={
+          isListing
+            ? "relative flex h-40 items-center justify-center overflow-hidden rounded-md bg-gray-50 p-3"
+            : "product-image-container relative"
+        }
+      >
+        {isSale && (
+          <span className="absolute left-2 top-2 rounded bg-red-500 px-2 py-1 text-[10px] font-bold text-white">
+            SALE
+          </span>
+        )}
+
+        {isNew && (
+          <span className="absolute right-2 top-2 rounded bg-green-500 px-2 py-1 text-[10px] font-bold text-white">
+            NEW
+          </span>
+        )}
+
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className={
+            isListing ? "h-full w-full object-contain" : "product-image"
+          }
+        />
+      </div>
 
       {/* Product Information */}
       <div className={isListing ? "flex flex-1 flex-col p-2" : "product-info"}>
@@ -77,7 +96,10 @@ function ProductCard({ product, variant = "default" }: ProductCardProps) {
             </p>
 
             {/* Add to Cart */}
-            <Button variant="primary">
+            <Button
+              variant={ButtonVariant.Primary}
+              className="!mt-2 !w-full !min-w-0 !h-10 px-2 text-sm"
+            >
               Add To Cart
             </Button>
           </>
@@ -101,7 +123,7 @@ function ProductCard({ product, variant = "default" }: ProductCardProps) {
               <input type="number" value="1" min="1" readOnly />
             </div>
 
-            <Button variant="primary" className="add-to-cart">
+            <Button variant={ButtonVariant.Primary} className="add-to-cart">
               Add to Cart
             </Button>
 

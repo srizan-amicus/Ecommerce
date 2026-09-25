@@ -5,4 +5,6 @@ export interface Product {
   imageUrl: string;
   category?: string;
   rating?: number;
+  originalPrice? : number;
+  isNew? : Boolean
 }
