@@ -2,6 +2,7 @@ import { ButtonVariant } from "../enums/button";
 
 interface ButtonProps {
   variant?: ButtonVariant;
+  type?: "button" | "submit" | "reset";
   children: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;

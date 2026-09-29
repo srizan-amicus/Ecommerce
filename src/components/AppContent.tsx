@@ -6,6 +6,8 @@ import ProductList from "../pages/product-list";
 import Home from "../pages/home";
 import Header from "./Header";
 import useDebounce from "../hooks/useDebounce";
+import CheckoutControlled from "../pages/checkout-controlled";
+import CheckoutHookForm from "../pages/checkout-hook-form";
 
 function AppContent() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,6 +26,10 @@ function AppContent() {
           path="/product-list"
           element={<ProductList searchTerm={debouncedSearchTerm} />}
         />
+
+        <Route path="/checkout-controlled" element={<CheckoutControlled />} />
+
+        <Route path="/checkout-hook-form" element={<CheckoutHookForm />} />
       </Routes>
     </>
   );
