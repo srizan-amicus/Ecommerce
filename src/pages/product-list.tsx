@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import Button from "../components/Button";
 import ProductFilters from "../components/ProductFilters";
 import ProductListHeader from "../components/ProductListHeader";
@@ -13,6 +15,10 @@ interface ProductListProps {
 }
 
 function ProductList({ searchTerm }: ProductListProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const productsPerPage = 8;
+
   const {
     products: apiProducts,
     loading,
@@ -84,10 +90,28 @@ function ProductList({ searchTerm }: ProductListProps) {
       return sortOrder === "asc" ? comparison : -comparison;
     }
 
-    const comparison = (a.product.rating ?? 0) - (b.product.rating ?? 0);
+    const comparison =
+      (a.product.rating ?? 0) - (b.product.rating ?? 0);
 
     return sortOrder === "asc" ? comparison : -comparison;
   });
+
+  // Pagination
+  const totalPages = Math.ceil(
+    sortedProducts.length / productsPerPage,
+  );
+
+  const startIndex = (currentPage - 1) * productsPerPage;
+
+  const paginatedProducts = sortedProducts.slice(
+    startIndex,
+    startIndex + productsPerPage,
+  );
+
+  // Reset to page 1 when search/filter/sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategories, sortBy, sortOrder]);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
@@ -106,7 +130,9 @@ function ProductList({ searchTerm }: ProductListProps) {
           <aside className="hidden md:block">
             <div className="sticky top-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
               <div className="mb-5 border-b border-gray-100 pb-4">
-                <h2 className="text-base font-bold text-gray-900">Filters</h2>
+                <h2 className="text-base font-bold text-gray-900">
+                  Filters
+                </h2>
 
                 <p className="mt-1 text-[11px] text-gray-400">
                   Refine your results
@@ -132,7 +158,9 @@ function ProductList({ searchTerm }: ProductListProps) {
             <div className="rounded-2xl border border-gray-200 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
               <div className="flex items-center justify-between px-5 py-4">
                 <div>
-                  <h2 className="text-base font-bold text-gray-900">Filters</h2>
+                  <h2 className="text-base font-bold text-gray-900">
+                    Filters
+                  </h2>
 
                   <p className="mt-1 text-[11px] text-gray-400">
                     Refine your results
@@ -183,13 +211,17 @@ function ProductList({ searchTerm }: ProductListProps) {
           {/* Products */}
           <section className="min-w-0">
             <ProductGrid
-              products={sortedProducts}
+              products={paginatedProducts}
               loading={loading}
               error={error}
               onRetry={fetchProducts}
             />
 
-            <ProductPagination />
+            <ProductPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </section>
         </div>
       </main>
