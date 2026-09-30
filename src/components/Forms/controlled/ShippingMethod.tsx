@@ -1,4 +1,4 @@
-import type { CheckoutErrors } from "../utils/checkoutValidation";
+import type { CheckoutErrors } from "../../../utils/checkoutValidation";
 
 interface ShippingMethodProps {
   value: string;

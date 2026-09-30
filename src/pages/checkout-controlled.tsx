@@ -1,5 +1,5 @@
 import CheckoutSteps from "../components/CheckoutSteps";
-import ShippingFormControlled from "../components/ShippingFormControlled";
+import ShippingFormControlled from "../components/Forms/controlled/ShippingFormControlled";
 
 function CheckoutControlled() {
   return (

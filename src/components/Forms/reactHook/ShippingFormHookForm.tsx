@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import type { CheckoutFormData } from "../types/checkout";
-import useLocationOptions from "../hooks/useLocationOptions";
-import ShippingFieldsHookForm from "./Forms/reactHook/ShippingFieldsHookForm";
+import type { CheckoutFormData } from "../../../types/checkout";
+import useLocationOptions from "../../../hooks/useLocationOptions";
+import ShippingFieldsHookForm from "./ShippingFieldsHookForm";
 import ShippingMethodHookForm from "./ShippingMethodHookForm";
 
 type ShippingFormHookFormProps = {

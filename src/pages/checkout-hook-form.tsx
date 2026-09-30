@@ -1,6 +1,6 @@
 import CheckoutSteps from "../components/CheckoutSteps";
 import OrderSummary from "../components/OrderSummary";
-import ShippingFormHookForm from "../components/ShippingFormHookForm";
+import ShippingFormHookForm from "../components/Forms/reactHook/ShippingFormHookForm";
 
 function CheckoutHookForm() {
   return (

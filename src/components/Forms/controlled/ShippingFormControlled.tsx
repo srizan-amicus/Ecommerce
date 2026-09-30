@@ -1,13 +1,13 @@
 import { useState } from "react";
-import type { CheckoutFormData } from "../types/checkout";
-import useLocationOptions from "../hooks/useLocationOptions";
+import type { CheckoutFormData } from "../../../types/checkout";
+import useLocationOptions from "../../../hooks/useLocationOptions";
 import {
   validateField,
   validateForm,
   type CheckoutErrors,
-} from "../utils/checkoutValidation";
-import OrderSummary from "./OrderSummary";
-import ShippingFields from "./Forms/controlled/ShippingFields";
+} from "../../../utils/checkoutValidation";
+import OrderSummary from "../../OrderSummary";
+import ShippingFields from "./ShippingFields";
 import ShippingMethod from "./ShippingMethod";
 
 function ShippingFormControlled() {
