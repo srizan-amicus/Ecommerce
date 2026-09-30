@@ -1,5 +1,7 @@
 import { useFormContext } from "react-hook-form";
+import Button from "./Button";
 import type { CheckoutFormData } from "../types/checkout";
+import { ButtonVariant } from "../enums/button";
 
 type OrderSummaryProps = {
   isFormValid?: boolean;
@@ -59,14 +61,14 @@ function OrderSummary({ isFormValid }: OrderSummaryProps) {
           <span className="text-orange-600">$442.34</span>
         </div>
 
-        <button
+        <Button
           type="submit"
+          variant={ButtonVariant.Order}
           form="checkout-form"
           disabled={!isValid}
-          className="mt-4 h-10 w-full bg-orange-600 text-xs font-bold text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           PLACE ORDER
-        </button>
+        </Button>
       </div>
     </section>
   );
