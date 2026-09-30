@@ -7,7 +7,7 @@ import {
   type CheckoutErrors,
 } from "../utils/checkoutValidation";
 import OrderSummary from "./OrderSummary";
-import ShippingFields from "./ShippingFields";
+import ShippingFields from "./Forms/controlled/ShippingFields";
 import ShippingMethod from "./ShippingMethod";
 
 function ShippingFormControlled() {

@@ -1,5 +1,6 @@
-import type { CheckoutFormData } from "../types/checkout";
-import type { CheckoutErrors } from "../utils/checkoutValidation";
+import InputField from "../../InputField";
+import type { CheckoutFormData } from "../../../types/checkout";
+import type { CheckoutErrors } from "../../../utils/checkoutValidation";
 
 interface ShippingFieldsProps {
   formData: CheckoutFormData;
@@ -32,120 +33,64 @@ function ShippingFields({
   return (
     <>
       {/* Full Name */}
-      <div>
-        <label
-          htmlFor="fullName"
-          className="mb-1 block text-xs font-semibold text-gray-700"
-        >
-          Full Name
-        </label>
-
-        <input
-          id="fullName"
-          name="fullName"
-          type="text"
-          value={formData.fullName}
-          onChange={onChange}
-          className="h-9 w-full border border-gray-300 px-3 text-xs outline-none focus:border-orange-500"
-        />
-
-        {errors.fullName && (
-          <p className="mt-1 text-xs text-red-500">{errors.fullName}</p>
-        )}
-      </div>
+      <InputField
+        id="fullName"
+        name="fullName"
+        label="Full Name"
+        type="text"
+        value={formData.fullName}
+        onChange={onChange}
+        error={errors.fullName}
+      />
 
       {/* Email + Phone */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-xs font-semibold text-gray-700"
-          >
-            Email
-          </label>
+        <InputField
+          id="email"
+          name="email"
+          label="Email"
+          type="email"
+          value={formData.email}
+          onChange={onChange}
+          error={errors.email}
+        />
 
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={onChange}
-            className="h-9 w-full border border-gray-300 px-3 text-xs outline-none focus:border-orange-500"
-          />
-
-          {errors.email && (
-            <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-          )}
-        </div>
-
-        <div>
-          <label
-            htmlFor="phone"
-            className="mb-1 block text-xs font-semibold text-gray-700"
-          >
-            Phone
-          </label>
-
-          <input
-            id="phone"
-            name="phone"
-            type="number"
-            value={formData.phone}
-            onChange={onChange}
-            className="h-9 w-full border border-gray-300 px-3 text-xs outline-none focus:border-orange-500"
-          />
-
-          {errors.phone && (
-            <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
-          )}
-        </div>
+        <InputField
+          id="phone"
+          name="phone"
+          label="Phone"
+          type="number"
+          value={formData.phone}
+          onChange={onChange}
+          error={errors.phone}
+        />
       </div>
 
       {/* Street Address */}
-      <div>
-        <label
-          htmlFor="streetAddress"
-          className="mb-1 block text-xs font-semibold text-gray-700"
-        >
-          Street Address
-        </label>
-
-        <input
-          id="streetAddress"
-          name="streetAddress"
-          type="text"
-          value={formData.streetAddress}
-          onChange={onChange}
-          className="h-9 w-full border border-gray-300 px-3 text-xs outline-none focus:border-orange-500"
-        />
-
-        {errors.streetAddress && (
-          <p className="mt-1 text-xs text-red-500">{errors.streetAddress}</p>
-        )}
-      </div>
+      <InputField
+        id="streetAddress"
+        name="streetAddress"
+        label="Street Address"
+        type="text"
+        value={formData.streetAddress}
+        onChange={onChange}
+        error={errors.streetAddress}
+      />
 
       {/* Apt / Suite */}
-      <div>
-        <label
-          htmlFor="apartment"
-          className="mb-1 block text-xs font-semibold text-gray-700"
-        >
-          Apt/Suite{" "}
-          <span className="font-normal text-gray-400">(Optional)</span>
-        </label>
-
-        <input
-          id="apartment"
-          name="apartment"
-          type="text"
-          value={formData.apartment}
-          onChange={onChange}
-          className="h-9 w-full border border-gray-300 px-3 text-xs outline-none focus:border-orange-500"
-        />
-      </div>
+      <InputField
+        id="apartment"
+        name="apartment"
+        label="Apt/Suite"
+        type="text"
+        value={formData.apartment}
+        onChange={onChange}
+        optional
+      />
 
       {/* City + State */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {/* City */}
         <div>
           <label
             htmlFor="city"
@@ -178,6 +123,7 @@ function ShippingFields({
           )}
         </div>
 
+        {/* State */}
         <div>
           <label
             htmlFor="state"
@@ -213,28 +159,18 @@ function ShippingFields({
 
       {/* ZIP + Country */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <label
-            htmlFor="zip"
-            className="mb-1 block text-xs font-semibold text-gray-700"
-          >
-            ZIP
-          </label>
+        {/* ZIP */}
+        <InputField
+          id="zip"
+          name="zip"
+          label="ZIP"
+          type="text"
+          value={formData.zip}
+          onChange={onChange}
+          error={errors.zip}
+        />
 
-          <input
-            id="zip"
-            name="zip"
-            type="text"
-            value={formData.zip}
-            onChange={onChange}
-            className="h-9 w-full border border-gray-300 px-3 text-xs outline-none focus:border-orange-500"
-          />
-
-          {errors.zip && (
-            <p className="mt-1 text-xs text-red-500">{errors.zip}</p>
-          )}
-        </div>
-
+        {/* Country */}
         <div>
           <label
             htmlFor="country"
