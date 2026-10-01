@@ -1,4 +1,4 @@
-import CheckoutSteps from "../components/CheckoutSteps";
+import CheckoutSteps from "../components/Checkout/CheckoutSteps";
 import ShippingFormControlled from "../components/Forms/controlled/ShippingFormControlled";
 
 function CheckoutControlled() {

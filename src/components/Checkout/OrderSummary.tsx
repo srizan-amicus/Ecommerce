@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
-import Button from "./Button";
-import type { CheckoutFormData } from "../types/checkout";
-import { ButtonVariant } from "../enums/button";
+import Button from "../Common/Button";
+import type { CheckoutFormData } from "../../types/checkout";
+import { ButtonVariant } from "../../enums/button";
 
 type OrderSummaryProps = {
   isFormValid?: boolean;

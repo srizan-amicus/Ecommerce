@@ -1,8 +1,8 @@
-import Hero from "../components/Hero";
-import QuickLinks from "../components/QuickLinks";
-import FeaturedParts from "../components/FeaturedParts";
-import PopularCategories from "../components/PopularCategories";
-import Footer from "../components/Footer";
+import Hero from "../components/PageContents/Hero";
+import QuickLinks from "../components/PageContents/QuickLinks";
+import FeaturedParts from "../components/PageContents/FeaturedParts";
+import PopularCategories from "../components/PageContents/PopularCategories";
+import Footer from "../components/PageContents/Footer";
 
 function Home() {
   return (

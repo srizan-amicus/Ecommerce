@@ -1,5 +1,5 @@
-import Button from "../components/Button";
-import Card from "../components/Card";
+import Button from "../components/Common/Button";
+import Card from "../components/Common/Card";
 import { ButtonVariant } from "../enums/button";
 
 function Showcase() {

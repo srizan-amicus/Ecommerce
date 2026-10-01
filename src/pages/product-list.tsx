@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import Button from "../components/Button";
-import ProductFilters from "../components/ProductFilters";
-import ProductListHeader from "../components/ProductListHeader";
-import ProductGrid from "../components/ProductGrid";
-import ProductPagination from "../components/ProductPagination";
+import Button from "../components/Common/Button";
+import ProductFilters from "../components/Products/ProductFilters";
+import ProductListHeader from "../components/Products/ProductListHeader";
+import ProductGrid from "../components/Products/ProductGrid";
+import ProductPagination from "../components/Products/ProductPagination";
 import products from "../data/products";
 import useProducts from "../hooks/useProducts";
 import useProductFilters from "../hooks/useProductFilters";

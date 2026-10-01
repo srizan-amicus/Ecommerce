@@ -1,4 +1,4 @@
-import { ButtonVariant } from "../enums/button";
+import { ButtonVariant } from "../../enums/button";
 
 interface ButtonProps {
   variant?: ButtonVariant;

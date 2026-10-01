@@ -1,4 +1,4 @@
-import InputField from "../../InputField";
+import InputField from "../../Common/InputField";
 import type { CheckoutFormData } from "../../../types/checkout";
 import type { CheckoutErrors } from "../../../utils/checkoutValidation";
 

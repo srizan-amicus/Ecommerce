@@ -1,5 +1,5 @@
-import Button from "./Button";
-import { ButtonVariant } from "../enums/button";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
 
 interface ProductListHeaderProps {
   searchTerm: string;

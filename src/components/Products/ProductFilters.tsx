@@ -1,6 +1,6 @@
-import CategoryFilter from "./CategoryFilter";
-import SortFilter from "./SortFilter";
-import { SortBy, SortOrder } from "../enums/sort";
+import CategoryFilter from "../Category/CategoryFilter";
+import SortFilter from "../Filters/SortFilter";
+import { SortBy, SortOrder } from "../../enums/sort";
 
 interface ProductFiltersProps {
   categories: string[];

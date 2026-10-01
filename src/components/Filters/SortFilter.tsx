@@ -1,4 +1,4 @@
-import { SortBy, SortOrder } from "../enums/sort";
+import { SortBy, SortOrder } from "../../enums/sort";
 
 interface SortFilterProps {
   sortBy: SortBy | null;

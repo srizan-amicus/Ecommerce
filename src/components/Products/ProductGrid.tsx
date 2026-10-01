@@ -1,10 +1,10 @@
-import Button from "./Button";
+import Button from "../Common/Button";
 import ProductCard from "./ProductCards";
 import ProductSkeleton from "./ProductSkeleton";
-import EmptyState from "./EmptyState";
-import { ButtonVariant } from "../enums/button";
-import { ProductCardVariant } from "../enums/product";
-import type { Product } from "../types/product";
+import EmptyState from "../Common/EmptyState";
+import { ButtonVariant } from "../../enums/button";
+import { ProductCardVariant } from "../../enums/product";
+import type { Product } from "../../types/product";
 
 interface DisplayedProduct {
   product: Product;

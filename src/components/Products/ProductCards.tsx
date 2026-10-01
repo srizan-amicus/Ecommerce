@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { Product } from "../types/product";
-import QuantitySelector from "./QuantitySelector";
-import Button from "./Button";
-import { ButtonVariant } from "../enums/button";
-import { ProductCardVariant } from "../enums/product";
+import type { Product } from "../../types/product";
+import QuantitySelector from "../Quantity/QuantitySelector";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
+import { ProductCardVariant } from "../../enums/product";
 
 interface ProductCardProps {
   product: Product;

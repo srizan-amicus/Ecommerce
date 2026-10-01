@@ -1,6 +1,6 @@
-import Card from "./Card";
-import Button from "./Button";
-import { ButtonVariant } from "../enums/button";
+import Card from "../Common/Card";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
 
 function QuickLinks() {
   const links = [

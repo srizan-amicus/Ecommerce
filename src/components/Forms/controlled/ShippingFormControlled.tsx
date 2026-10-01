@@ -6,7 +6,7 @@ import {
   validateForm,
   type CheckoutErrors,
 } from "../../../utils/checkoutValidation";
-import OrderSummary from "../../OrderSummary";
+import OrderSummary from "../../Checkout/OrderSummary";
 import ShippingFields from "./ShippingFields";
 import ShippingMethod from "./ShippingMethod";
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import ProductCard from "../components/ProductCards";
+import ProductCard from "../components/Products/ProductCards";
 import type { Product } from "../types/product";
 import { fetchProductsFromApi } from "../api/productsApi";
 import products from "../data/products";
-import ProductSkeleton from "../components/ProductSkeleton";
-import Button from "../components/Button";
+import ProductSkeleton from "../components/Products/ProductSkeleton";
+import Button from "../components/Common/Button";
 
 function Products() {
   const [apiProducts, setApiProducts] = useState<Product[]>([]);

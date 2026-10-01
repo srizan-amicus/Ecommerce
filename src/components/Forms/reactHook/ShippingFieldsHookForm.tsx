@@ -1,6 +1,6 @@
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 
-import InputField from "../../InputField";
+import InputField from "../../Common/InputField";
 import type { CheckoutFormData } from "../../../types/checkout";
 
 interface ShippingFieldsHookFormProps {
