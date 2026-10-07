@@ -2,83 +2,83 @@ import { useEffect, useState } from "react";
 import ProductCard from "../components/Products/ProductCards";
 import type { Product } from "../types/product";
 import { fetchProductsFromApi } from "../api/productsApi";
-import products from "../data/products";
 import ProductSkeleton from "../components/Products/ProductSkeleton";
 import Button from "../components/Common/Button";
 
 function Products() {
   const [apiProducts, setApiProducts] = useState<Product[]>([]);
 
-  // UI states
   const [loading, setLoading] = useState(true);
-
-  // Error handling
   const [error, setError] = useState<string | null>(null);
 
-  // api fetching
-  const fetchProducts = async (signal?: AbortSignal) => {
+  // Used for Refresh and Try Again
+  const fetchProducts = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const transformedProducts = await fetchProductsFromApi(signal);
-
-      if (signal?.aborted) {
-        return;
-      }
-
-      setApiProducts(transformedProducts);
-    } catch (err) {
-      // ignore intentional request cancellation
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
+      const response = await fetchProductsFromApi({});
+      setApiProducts(response.products);
+    } catch {
       setError("Could not load more products. Please try again.");
     } finally {
-      // don't change loading state for an cancelled request
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
+  // Initial API fetch
   useEffect(() => {
     const controller = new AbortController();
 
-    fetchProducts(controller.signal);
+    const loadProducts = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetchProductsFromApi({}, controller.signal);
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setApiProducts(response.products);
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") {
+          return;
+        }
+
+        setError("Could not load more products. Please try again.");
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadProducts();
 
     return () => {
       controller.abort();
     };
   }, []);
 
-  // Combining static products and API products
-  const allProducts = [
-    ...products.map((product) => ({
-      product,
-      source: "static",
-    })),
-    ...apiProducts.map((product) => ({
-      product,
-      source: "api",
-    })),
-  ];
-
   return (
     <div className="products-section">
-      <div className="flex h-12 items-center justify-between mt-8">
-        <h1 className="!m-0 !p-0 text-2xl leading-none">Featured Products</h1>
+      <div className="mt-8 flex h-12 items-center justify-between">
+        <h1 className="!m-0 !p-0 text-2xl leading-none">
+          Featured Products
+        </h1>
 
         <Button
           variant="primary"
-          onClick={() => fetchProducts()}
+          onClick={fetchProducts}
           disabled={loading}
           className="!m-0 rounded bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Refreshing..." : "Refresh"}
         </Button>
       </div>
+
       {loading && (
         <div className="product-grid">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -93,7 +93,7 @@ function Products() {
 
           <Button
             variant="primary"
-            onClick={() => fetchProducts()}
+            onClick={fetchProducts}
             className="mt-3 rounded bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600"
           >
             Try Again
@@ -103,8 +103,8 @@ function Products() {
 
       {!loading && !error && (
         <div className="product-grid">
-          {allProducts.map(({ product, source }) => (
-            <ProductCard key={`${source}-${product.id}`} product={product} />
+          {apiProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}

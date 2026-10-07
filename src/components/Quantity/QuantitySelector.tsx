@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 
 interface QuantitySelectorProps {
   quantity: number;
@@ -15,10 +15,6 @@ function QuantitySelector({
 }: QuantitySelectorProps) {
   const [inputValue, setInputValue] = useState(String(quantity));
 
-  useEffect(() => {
-    setInputValue(String(quantity));
-  }, [quantity]);
-
   const safeValue = (value: number) => {
     if (Number.isNaN(value)) {
       return min;
@@ -33,19 +29,23 @@ function QuantitySelector({
 
   const increase = () => {
     const nextValue = safeValue(quantity + 1);
+
     if (nextValue === quantity) {
       return;
     }
 
+    setInputValue(String(nextValue));
     onChange(nextValue);
   };
 
   const decrease = () => {
     const nextValue = safeValue(quantity - 1);
+
     if (nextValue === quantity) {
       return;
     }
 
+    setInputValue(String(nextValue));
     onChange(nextValue);
   };
 
@@ -54,12 +54,15 @@ function QuantitySelector({
 
     if (inputValue === "" || !Number.isFinite(parsed)) {
       const resetValue = min;
+
       setInputValue(String(resetValue));
       onChange(resetValue);
+
       return;
     }
 
     const nextValue = safeValue(parsed);
+
     setInputValue(String(nextValue));
     onChange(nextValue);
   };
@@ -73,6 +76,7 @@ function QuantitySelector({
     }
 
     const parsed = Number(rawValue);
+
     if (!Number.isFinite(parsed)) {
       return;
     }

@@ -2,33 +2,27 @@ import { useState } from "react";
 import { SortBy, SortOrder } from "../enums/sort";
 
 function useProductFilters() {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    [],
-  );
-
-  const [draftCategories, setDraftCategories] = useState<string[]>([]);
-
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [draftCategory, setDraftCategory] = useState<number | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
+  const [draftBrand, setDraftBrand] = useState<number | null>(null);
+  const [selectedPriceRange, setSelectedPriceRange] = useState("");
+  const [draftPriceRange, setDraftPriceRange] = useState("");
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
+  const [draftRating, setDraftRating] = useState<number | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
   const [sortBy, setSortBy] = useState<SortBy | null>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Asc);
+  const toggleCategory = (categoryId: number, isMobile = false) => {
+    const setter = isMobile ? setDraftCategory : setSelectedCategory;
 
-  const [sortOrder, setSortOrder] = useState<SortOrder>(
-    SortOrder.Asc,
-  );
+    setter((current) => (current === categoryId ? null : categoryId));
+  };
 
-  const toggleCategory = (
-    category: string,
-    isMobile = false,
-  ) => {
-    const setter = isMobile
-      ? setDraftCategories
-      : setSelectedCategories;
+  const toggleBrand = (brandId: number, isMobile = false) => {
+    const setter = isMobile ? setDraftBrand : setSelectedBrand;
 
-    setter((current) =>
-      current.includes(category)
-        ? current.filter((item) => item !== category)
-        : [...current, category],
-    );
+    setter((current) => (current === brandId ? null : brandId));
   };
 
   const toggleFilters = () => {
@@ -37,30 +31,69 @@ function useProductFilters() {
       return;
     }
 
-    setDraftCategories(selectedCategories);
+    setDraftCategory(selectedCategory);
+    setDraftBrand(selectedBrand);
+    setDraftPriceRange(selectedPriceRange);
+    setDraftRating(selectedRating);
+
     setIsFilterOpen(true);
   };
 
   const applyFilters = () => {
-    setSelectedCategories(draftCategories);
+    setSelectedCategory(draftCategory);
+    setSelectedBrand(draftBrand);
+    setSelectedPriceRange(draftPriceRange);
+    setSelectedRating(draftRating);
+
     setIsFilterOpen(false);
   };
 
-  const clearCategories = () => {
-    setSelectedCategories([]);
+  const clearFilters = () => {
+    setSelectedCategory(null);
+    setDraftCategory(null);
+
+    setSelectedBrand(null);
+    setDraftBrand(null);
+
+    setSelectedPriceRange("");
+    setDraftPriceRange("");
+
+    setSelectedRating(null);
+    setDraftRating(null);
   };
 
   return {
-    selectedCategories,
-    draftCategories,
+    selectedCategory,
+    draftCategory,
+
+    selectedBrand,
+    draftBrand,
+
+    selectedPriceRange,
+    draftPriceRange,
+
+    selectedRating,
+    draftRating,
+
     isFilterOpen,
     sortBy,
     sortOrder,
 
     toggleCategory,
+    toggleBrand,
+
     toggleFilters,
     applyFilters,
-    clearCategories,
+    clearFilters,
+
+    setSelectedCategory,
+    setSelectedBrand,
+
+    setSelectedPriceRange,
+    setDraftPriceRange,
+
+    setSelectedRating,
+    setDraftRating,
 
     setSortBy,
     setSortOrder,

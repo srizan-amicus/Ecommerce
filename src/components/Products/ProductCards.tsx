@@ -8,13 +8,18 @@ import { ProductCardVariant } from "../../enums/product";
 interface ProductCardProps {
   product: Product;
   variant?: ProductCardVariant;
+  onAddToCart?: (productId: number, quantity: number) => void;
 }
 
-function ProductCard({ product, variant = "default" }: ProductCardProps) {
+function ProductCard({
+  product,
+  variant = "default",
+  onAddToCart,
+}: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const total = product.price * quantity;
 
- const isListing = variant === ProductCardVariant.Listing;
+  const isListing = variant === ProductCardVariant.Listing;
 
   //sale and new price
   const isSale =
@@ -52,7 +57,10 @@ function ProductCard({ product, variant = "default" }: ProductCardProps) {
         )}
 
         <img
-          src={product.imageUrl}
+          src={
+            product.imageUrl ||
+            "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600"
+          }
           alt={product.name}
           className={
             isListing ? "h-full w-full object-contain" : "product-image"
@@ -80,10 +88,17 @@ function ProductCard({ product, variant = "default" }: ProductCardProps) {
               ₹{product.price.toFixed(2)}
             </p>
 
-            {/* SKU */}
-            <p className="product-sku text-center">
-              #PRD-{product.id.toString().padStart(3, "0")}
-            </p>
+            {/* STAR RATING */}
+            <div className="flex items-center justify-center gap-1">
+              <span className="text-sm tracking-wide text-yellow-500">
+                {"★".repeat(Math.round(product.rating ?? 0))}
+                {"☆".repeat(5 - Math.round(product.rating ?? 0))}
+              </span>
+
+              <span className="text-xs font-semibold text-gray-600">
+                {product.rating?.toFixed(1) ?? "0.0"}
+              </span>
+            </div>
 
             {/* Quantity */}
             <div className="mt-2 flex justify-center">
@@ -97,11 +112,20 @@ function ProductCard({ product, variant = "default" }: ProductCardProps) {
 
             {/* Add to Cart */}
             <Button
-              variant={ButtonVariant.Primary}
-              className="!mt-2 !w-full !min-w-0 !h-10 px-2 text-sm"
-            >
-              Add To Cart
-            </Button>
+  variant={ButtonVariant.Primary}
+  className="!mt-2 !w-full !min-w-0 !h-10 px-2 text-sm"
+  onClick={() => {
+    console.log("Adding product:", {
+      id: product.id,
+      name: product.name,
+      quantity,
+    });
+
+    onAddToCart?.(product.id, quantity);
+  }}
+>
+  Add To Cart
+</Button>
           </>
         ) : (
           <>
@@ -123,9 +147,21 @@ function ProductCard({ product, variant = "default" }: ProductCardProps) {
               <input type="number" value="1" min="1" readOnly />
             </div>
 
-            <Button variant={ButtonVariant.Primary} className="add-to-cart">
-              Add to Cart
-            </Button>
+            <Button
+  variant={ButtonVariant.Primary}
+  className="!mt-2 !w-full !min-w-0 !h-10 px-2 text-sm"
+  onClick={() => {
+    console.log("Adding product:", {
+      id: product.id,
+      name: product.name,
+      quantity,
+    });
+
+    onAddToCart?.(product.id, quantity);
+  }}
+>
+  Add To Cart
+</Button>
 
             <Button className="shopping-list">+ SHOPPING LIST</Button>
           </>

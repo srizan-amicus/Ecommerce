@@ -6,19 +6,15 @@ import { ButtonVariant } from "../../enums/button";
 import { ProductCardVariant } from "../../enums/product";
 import type { Product } from "../../types/product";
 
-interface DisplayedProduct {
-  product: Product;
-  source: string;
-}
-
 interface ProductGridProps {
-  products: DisplayedProduct[];
+  products: Product[];
   loading: boolean;
   error: string | null;
   onRetry: () => void;
+  onAddToCart: (productId: number, quantity: number) => void;
 }
 
-function ProductGrid({ products, loading, error, onRetry }: ProductGridProps) {
+function ProductGrid({ products, loading, error, onRetry, onAddToCart }: ProductGridProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -51,11 +47,12 @@ function ProductGrid({ products, loading, error, onRetry }: ProductGridProps) {
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {products.map(({ product, source }) => (
+      {products.map((product) => (
         <ProductCard
-          key={`${source}-${product.id}`}
+          key={product.id}
           product={product}
           variant={ProductCardVariant.Listing}
+          onAddToCart={onAddToCart}
         />
       ))}
     </div>

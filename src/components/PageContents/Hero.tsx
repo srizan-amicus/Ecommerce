@@ -1,4 +1,22 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import SearchBar from "../Common/SearchBar";
+
 function Hero() {
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    const query = search.trim();
+
+    if (!query) {
+      navigate("/product-list");
+      return;
+    }
+
+    navigate(`/product-list?search=${encodeURIComponent(query)}`);
+  };
+
   return (
     <section
       className="relative h-60 bg-cover bg-center"
@@ -7,10 +25,8 @@ function Hero() {
           "url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600')",
       }}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Content */}
       <div className="relative flex h-full flex-col items-center justify-center">
         <h1 className="text-3xl font-black tracking-wide text-white md:text-4xl">
           FIND PRODUCTS, PARTS & ACCESSORIES
@@ -20,21 +36,13 @@ function Hero() {
           Find the right parts and accessories for your equipment.
         </p>
 
-        {/* Search Bar */}
-        <div className="mt-5 flex w-full max-w-md bg-white">
-          <input
-            type="text"
-            placeholder="Search"
-            className="h-11 flex-1 bg-white px-4 text-sm text-gray-700 outline-none"
-          />
-
-          <button
-            className="h-11 w-12 text-lg text-orange-600"
-            aria-label="Search"
-          >
-            🔍
-          </button>
-        </div>
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          onSearch={handleSearch}
+          placeholder="Search"
+          className="mt-5 w-full max-w-md"
+        />
       </div>
     </section>
   );

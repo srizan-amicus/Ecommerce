@@ -4,7 +4,10 @@ export interface Product {
   price: number;
   imageUrl: string;
   category?: string;
+  categoryId?: number;
   rating?: number;
-  originalPrice? : number;
-  isNew? : Boolean
+  originalPrice?: number;
+  isNew?: boolean;
+  brand?: string;
+  brandId?: number;
 }

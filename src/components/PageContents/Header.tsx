@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import SearchBar from "../Common/SearchBar";
 
 interface HeaderProps {
   searchTerm: string;
@@ -6,6 +7,19 @@ interface HeaderProps {
 }
 
 function Header({ searchTerm, onSearchChange }: HeaderProps) {
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    const query = searchTerm.trim();
+
+    if (!query) {
+      navigate("/product-list");
+      return;
+    }
+
+    navigate(`/product-list?search=${encodeURIComponent(query)}`);
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-5 px-4">
@@ -24,19 +38,12 @@ function Header({ searchTerm, onSearchChange }: HeaderProps) {
         </div>
 
         {/* Search */}
-        <div className="relative min-w-0 flex-1">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search by product name or keyword"
-            className="h-10 w-full rounded border border-gray-300 bg-white px-4 pr-11 text-sm text-gray-700 outline-none transition focus:border-orange-500"
-          />
-
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xl text-orange-500">
-            🔍
-          </span>
-        </div>
+        <SearchBar
+          value={searchTerm}
+          onChange={onSearchChange}
+          onSearch={handleSearch}
+          placeholder="Search by product name or keyword"
+        />
 
         {/* Right Side */}
         <div className="hidden items-center gap-5 text-xs font-medium text-gray-600 lg:flex">
@@ -44,21 +51,23 @@ function Header({ searchTerm, onSearchChange }: HeaderProps) {
             Home
           </Link>
 
-          <Link to="/checkout-controlled" className="transition hover:text-orange-600">
-            Checkout
-          </Link>
-
-          <Link to="/checkout-hook-form" className="transition hover:text-orange-600">
-            CheckoutHF
-          </Link>
-
-          <Link to="/product-list" className="transition hover:text-orange-600">
+          <Link
+            to="/product-list"
+            className="transition hover:text-orange-600"
+          >
             Product List
           </Link>
 
-          {/* <span className="cursor-pointer transition hover:text-orange-600">
-            Help
-          </span> */}
+          <Link
+            to="/checkout-hook-form"
+            className="transition hover:text-orange-600"
+          >
+            CheckoutHF
+          </Link>
+
+          <Link to="/checkout-controlled" className="transition hover:text-orange-600">
+            Controlled Form
+          </Link>
 
           <span className="cursor-pointer text-lg transition hover:text-orange-600">
             🛒

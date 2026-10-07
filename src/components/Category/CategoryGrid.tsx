@@ -1,5 +1,5 @@
-import Card from "./Common/Card";
-import Button from "./Common/Button";
+import Card from "../Common/Card";
+import Button from "../Common/Button";
 
 function CategoryGrid() {
   return (

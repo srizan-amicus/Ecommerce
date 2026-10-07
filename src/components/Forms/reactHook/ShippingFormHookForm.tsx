@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useWatch } from "react-hook-form";
 import type { CheckoutFormData } from "../../../types/checkout";
 import useLocationOptions from "../../../hooks/useLocationOptions";
 import ShippingFieldsHookForm from "./ShippingFieldsHookForm";
@@ -31,7 +31,8 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
     register,
     handleSubmit,
     reset,
-    watch,
+    getValues,
+    control,
     formState: { errors },
   } = methods;
 
@@ -50,8 +51,8 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
     setCities,
   } = useLocationOptions();
 
-  const country = watch("country");
-  const state = watch("state");
+  const country = useWatch({ control, name: "country" });
+  const state = useWatch({ control, name: "state" });
 
   useEffect(() => {
     if (!country) {
@@ -62,7 +63,7 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
 
     loadStates(country);
     setCities([]);
-  }, [country]);
+  }, [country, loadStates, setCities, setStates]);
 
   useEffect(() => {
     if (!country || !state) {
@@ -71,12 +72,12 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
     }
 
     loadCities(country, state);
-  }, [country, state]);
+  }, [country, loadCities, setCities, state]);
 
   const handleCountryChange = (value: string) => {
     reset(
       {
-        ...watch(),
+        ...getValues(),
         country: value,
         state: "",
         city: "",
@@ -91,7 +92,7 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
   const handleStateChange = (value: string) => {
     reset(
       {
-        ...watch(),
+        ...getValues(),
         state: value,
         city: "",
       },

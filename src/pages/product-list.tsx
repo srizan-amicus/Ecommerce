@@ -1,125 +1,72 @@
-import { useEffect, useState } from "react";
-
 import Button from "../components/Common/Button";
 import ProductFilters from "../components/Products/ProductFilters";
 import ProductListHeader from "../components/Products/ProductListHeader";
 import ProductGrid from "../components/Products/ProductGrid";
 import ProductPagination from "../components/Products/ProductPagination";
-import products from "../data/products";
-import useProducts from "../hooks/useProducts";
-import useProductFilters from "../hooks/useProductFilters";
-import { SortBy } from "../enums/sort";
+import useProductList from "../hooks/useProductList";
 
 interface ProductListProps {
   searchTerm: string;
+  onAddToCart: (productId: number, quantity: number) => void;
 }
 
-function ProductList({ searchTerm }: ProductListProps) {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const productsPerPage = 8;
-
+function ProductList({ searchTerm, onAddToCart }: ProductListProps) {
   const {
-    products: apiProducts,
+    apiProducts,
+    totalRecords,
+    totalPages,
     loading,
     error,
     fetchProducts,
-  } = useProducts();
 
-  const {
-    selectedCategories,
-    draftCategories,
+    categories,
+    brands,
+
+    currentPage,
+    setCurrentPage,
+
+    selectedCategory,
+    draftCategory,
+
+    selectedBrand,
+    draftBrand,
+
+    selectedPriceRange,
+    draftPriceRange,
+
+    selectedRating,
+    draftRating,
+
     isFilterOpen,
     sortBy,
     sortOrder,
+
     toggleCategory,
+    toggleBrand,
+
     toggleFilters,
     applyFilters,
-    clearCategories,
+    clearFilters,
+
+    setSelectedPriceRange,
+    setDraftPriceRange,
+
+    setSelectedRating,
+    setDraftRating,
+
     setSortBy,
     setSortOrder,
-  } = useProductFilters();
 
-  // Combine static + API products
-  const allProducts = [
-    ...products.map((product) => ({
-      product,
-      source: "static",
-    })),
-    ...apiProducts.map((product) => ({
-      product,
-      source: "api",
-    })),
-  ];
-
-  // Get unique categories
-  const categories = [
-    ...new Set(
-      allProducts.map(({ product }) => product.category).filter(Boolean),
-    ),
-  ] as string[];
-
-  // Filter products
-  const filteredProducts = allProducts.filter(({ product }) => {
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      (product.category && selectedCategories.includes(product.category));
-
-    return matchesSearch && matchesCategory;
-  });
-
-  // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (!sortBy) {
-      return 0;
-    }
-
-    if (sortBy === SortBy.Name) {
-      const comparison = a.product.name.localeCompare(b.product.name);
-
-      return sortOrder === "asc" ? comparison : -comparison;
-    }
-
-    if (sortBy === SortBy.Price) {
-      const comparison = a.product.price - b.product.price;
-
-      return sortOrder === "asc" ? comparison : -comparison;
-    }
-
-    const comparison =
-      (a.product.rating ?? 0) - (b.product.rating ?? 0);
-
-    return sortOrder === "asc" ? comparison : -comparison;
-  });
-
-  // Pagination
-  const totalPages = Math.ceil(
-    sortedProducts.length / productsPerPage,
-  );
-
-  const startIndex = (currentPage - 1) * productsPerPage;
-
-  const paginatedProducts = sortedProducts.slice(
-    startIndex,
-    startIndex + productsPerPage,
-  );
-
-  // Reset to page 1 when search/filter/sort changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategories, sortBy, sortOrder]);
+    effectiveSearchTerm,
+  } = useProductList(searchTerm);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <main className="mx-auto max-w-[1280px] px-4 py-5">
         {/* Header */}
         <ProductListHeader
-          searchTerm={searchTerm}
-          productCount={sortedProducts.length}
+          searchTerm={effectiveSearchTerm}
+          productCount={totalRecords}
           loading={loading}
           onRefresh={fetchProducts}
         />
@@ -141,14 +88,24 @@ function ProductList({ searchTerm }: ProductListProps) {
 
               <ProductFilters
                 categories={categories}
-                selectedCategories={selectedCategories}
-                draftCategories={draftCategories}
+                brands={brands}
+                selectedCategory={selectedCategory}
+                draftCategory={draftCategory}
+                selectedBrand={selectedBrand}
+                draftBrand={draftBrand}
+                selectedPriceRange={selectedPriceRange}
+                draftPriceRange={draftPriceRange}
+                selectedRating={selectedRating}
+                draftRating={draftRating}
                 sortBy={sortBy}
                 sortOrder={sortOrder}
-                onCategoryChange={(category) => toggleCategory(category)}
+                onCategoryChange={toggleCategory}
+                onBrandChange={toggleBrand}
+                onPriceRangeChange={setSelectedPriceRange}
+                onRatingChange={setSelectedRating}
                 onSortByChange={setSortBy}
                 onSortOrderChange={setSortOrder}
-                onClearCategories={clearCategories}
+                onClearFilters={clearFilters}
               />
             </div>
           </aside>
@@ -181,14 +138,26 @@ function ProductList({ searchTerm }: ProductListProps) {
                   <div className="max-h-[420px] overflow-y-auto">
                     <ProductFilters
                       categories={categories}
-                      selectedCategories={selectedCategories}
-                      draftCategories={draftCategories}
+                      brands={brands}
+                      selectedCategory={selectedCategory}
+                      draftCategory={draftCategory}
+                      selectedBrand={selectedBrand}
+                      draftBrand={draftBrand}
+                      selectedPriceRange={selectedPriceRange}
+                      draftPriceRange={draftPriceRange}
+                      selectedRating={selectedRating}
+                      draftRating={draftRating}
                       sortBy={sortBy}
                       sortOrder={sortOrder}
                       isMobile
-                      onCategoryChange={(category) =>
-                        toggleCategory(category, true)
+                      onCategoryChange={(categoryId) =>
+                        toggleCategory(categoryId, true)
                       }
+                      onBrandChange={(brandId) =>
+                        toggleBrand(brandId, true)
+                      }
+                      onPriceRangeChange={setDraftPriceRange}
+                      onRatingChange={setDraftRating}
                       onSortByChange={setSortBy}
                       onSortOrderChange={setSortOrder}
                     />
@@ -211,10 +180,11 @@ function ProductList({ searchTerm }: ProductListProps) {
           {/* Products */}
           <section className="min-w-0">
             <ProductGrid
-              products={paginatedProducts}
+              products={apiProducts}
               loading={loading}
               error={error}
               onRetry={fetchProducts}
+              onAddToCart={onAddToCart}
             />
 
             <ProductPagination
