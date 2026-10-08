@@ -1983,19 +1983,5 @@ The application demonstrates React and TypeScript concepts including:
 
 
 
-### A few important corrections I made from your old README
 
-- Added **Cart**, which wasn't documented before.
-- Added **authentication + access/refresh token flow**.
-- Added **automatic token refresh and retry**.
-- Added **`apiClient.ts`** architecture.
-- Added **`useFetch` + AbortController**.
-- Added **`useCart`**.
-- Added **`useLocationOptions`** and dependent Country → State → City loading.
-- Added **React Hook Form checkout** details.
-- Added **Toast notifications**.
-- Added **cart error handling**, including preserving backend messages such as stock validation.
-- Added **silent cart refresh**, which prevents the cart skeleton from flashing after add/update/remove.
-- Updated the project structure to include the newer `api`, `hooks`, `types`, `Cart`, `Checkout`, and utility files.
-- Removed claims that don't match the current `ProductCard` behavior, such as saying the default card necessarily has a `QuantitySelector`; your default/featured card now uses the direct quantity input.
 
