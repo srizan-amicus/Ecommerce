@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { fetchProductsFromApi } from "../api/productsApi";
 import type { Product } from "../types/product";
@@ -13,11 +13,16 @@ function useProductList(searchTerm: string) {
 
   const effectiveSearchTerm = searchTerm || urlSearchTerm;
 
+  const urlCategory =
+    urlCategoryId && !Number.isNaN(Number(urlCategoryId))
+      ? Number(urlCategoryId)
+      : null;
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const productsPerPage = 8;
 
-  //  seprate product data for category and brand filter options
+  // Separate product data for category and brand filter options
   const [filterProducts, setFilterProducts] = useState<Product[]>([]);
 
   const {
@@ -37,24 +42,102 @@ function useProductList(searchTerm: string) {
     sortBy,
     sortOrder,
 
-    toggleCategory,
-    toggleBrand,
+    toggleCategory: toggleCategoryFilter,
+    toggleBrand: toggleBrandFilter,
 
     toggleFilters,
-    applyFilters,
-    clearFilters,
+    applyFilters: applyProductFilters,
+    clearFilters: clearProductFilters,
 
-    setSelectedPriceRange,
+    setSelectedPriceRange: setProductPriceRange,
     setDraftPriceRange,
 
-    setSelectedRating,
+    setSelectedRating: setProductRating,
     setDraftRating,
 
-    setSortBy,
-    setSortOrder,
+    setSortBy: setProductSortBy,
+    setSortOrder: setProductSortOrder,
   } = useProductFilters();
 
-  //  things handled by backend API
+  /*
+   * URL category takes priority over the locally selected category.
+   * This allows category links to work directly from the URL
+   * without synchronizing URL state into React state through an Effect.
+   */
+  const effectiveCategory = urlCategory ?? selectedCategory;
+
+  // Reset pagination when an active category changes.
+  const toggleCategory = useCallback(
+    (categoryId: number, isMobile = false) => {
+      if (!isMobile) {
+        setCurrentPage(1);
+      }
+
+      toggleCategoryFilter(categoryId, isMobile);
+    },
+    [toggleCategoryFilter],
+  );
+
+  // Reset pagination when an active brand changes.
+  const toggleBrand = useCallback(
+    (brandId: number, isMobile = false) => {
+      if (!isMobile) {
+        setCurrentPage(1);
+      }
+
+      toggleBrandFilter(brandId, isMobile);
+    },
+    [toggleBrandFilter],
+  );
+
+  // Apply mobile filters and return to page 1.
+  const applyFilters = useCallback(() => {
+    setCurrentPage(1);
+    applyProductFilters();
+  }, [applyProductFilters]);
+
+  // Clear all filters and return to page 1.
+  const clearFilters = useCallback(() => {
+    setCurrentPage(1);
+    clearProductFilters();
+  }, [clearProductFilters]);
+
+  // Change price filter and return to page 1.
+  const setSelectedPriceRange = useCallback(
+    (value: string) => {
+      setCurrentPage(1);
+      setProductPriceRange(value);
+    },
+    [setProductPriceRange],
+  );
+
+  // Change rating filter and return to page 1.
+  const setSelectedRating = useCallback(
+    (value: number | null) => {
+      setCurrentPage(1);
+      setProductRating(value);
+    },
+    [setProductRating],
+  );
+
+  // Change sorting and return to page 1.
+  const setSortBy = useCallback(
+    (value: typeof sortBy) => {
+      setCurrentPage(1);
+      setProductSortBy(value);
+    },
+    [setProductSortBy],
+  );
+
+  const setSortOrder = useCallback(
+    (value: typeof sortOrder) => {
+      setCurrentPage(1);
+      setProductSortOrder(value);
+    },
+    [setProductSortOrder],
+  );
+
+  // Things handled by backend API
   const apiQuery = useMemo(() => {
     let minPrice: number | undefined;
     let maxPrice: number | undefined;
@@ -74,7 +157,7 @@ function useProductList(searchTerm: string) {
 
     return {
       search: effectiveSearchTerm || undefined,
-      categoryId: selectedCategory ?? undefined,
+      categoryId: effectiveCategory ?? undefined,
       brandId: selectedBrand ?? undefined,
       minPrice,
       maxPrice,
@@ -88,7 +171,7 @@ function useProductList(searchTerm: string) {
     };
   }, [
     effectiveSearchTerm,
-    selectedCategory,
+    effectiveCategory,
     selectedBrand,
     selectedPriceRange,
     selectedRating,
@@ -125,8 +208,7 @@ function useProductList(searchTerm: string) {
     loadFilterProducts();
   }, []);
 
-  // Create category filter options from the separate filter product data.
-  // Categories are sorted alphabetically.
+  // Create category filter options from separate filter product data.
   const categories = useMemo(() => {
     return [
       ...new Map(
@@ -145,9 +227,7 @@ function useProductList(searchTerm: string) {
     ].sort((a, b) => a.name.localeCompare(b.name));
   }, [filterProducts]);
 
-  // Create brand filter options from the separate filter product data.
-  //Brands are sorted alphabetically.
-
+  // Create brand filter options from separate filter product data.
   const brands = useMemo(() => {
     return [
       ...new Map(
@@ -164,32 +244,6 @@ function useProductList(searchTerm: string) {
     ].sort((a, b) => a.name.localeCompare(b.name));
   }, [filterProducts]);
 
-  //for using categoryid directly
-  useEffect(() => {
-    if (!urlCategoryId) {
-      return;
-    }
-
-    const categoryId = Number(urlCategoryId);
-
-    if (!Number.isNaN(categoryId) && selectedCategory !== categoryId) {
-      toggleCategory(categoryId);
-    }
-  }, [urlCategoryId, selectedCategory, toggleCategory]);
-
-  //returns to page 1
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [
-    effectiveSearchTerm,
-    selectedCategory,
-    selectedBrand,
-    selectedPriceRange,
-    selectedRating,
-    sortBy,
-    sortOrder,
-  ]);
-
   return {
     apiProducts,
     totalRecords,
@@ -204,7 +258,7 @@ function useProductList(searchTerm: string) {
     currentPage,
     setCurrentPage,
 
-    selectedCategory,
+    selectedCategory: effectiveCategory,
     draftCategory,
 
     selectedBrand,

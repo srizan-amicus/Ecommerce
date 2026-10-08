@@ -12,8 +12,10 @@ interface State {
   state_code?: string;
 }
 
-export async function fetchCountries(): Promise<Country[]> {
-  const response = await fetch(`${BASE_URL}/countries`);
+export async function fetchCountries(signal?: AbortSignal): Promise<Country[]> {
+  const response = await fetch(`${BASE_URL}/countries`, {
+    signal,
+  });
 
   if (!response.ok) {
     throw new Error("Could not load countries.");
@@ -26,6 +28,7 @@ export async function fetchCountries(): Promise<Country[]> {
 
 export async function fetchStates(
   country: string,
+  signal?: AbortSignal,
 ): Promise<State[]> {
   const response = await fetch(`${BASE_URL}/countries/states`, {
     method: "POST",
@@ -33,6 +36,7 @@ export async function fetchStates(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ country }),
+    signal,
   });
 
   if (!response.ok) {
@@ -47,20 +51,19 @@ export async function fetchStates(
 export async function fetchCities(
   country: string,
   state: string,
+  signal?: AbortSignal,
 ): Promise<string[]> {
-  const response = await fetch(
-    `${BASE_URL}/countries/state/cities`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        country,
-        state,
-      }),
+  const response = await fetch(`${BASE_URL}/countries/state/cities`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      country,
+      state,
+    }),
+    signal,
+  });
 
   if (!response.ok) {
     throw new Error("Could not load cities.");

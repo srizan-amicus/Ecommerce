@@ -4,11 +4,15 @@ import QuantitySelector from "../Quantity/QuantitySelector";
 import Button from "../Common/Button";
 import { ButtonVariant } from "../../enums/button";
 import { ProductCardVariant } from "../../enums/product";
+import type { AddToCartResult } from "../../types/cart";
 
 interface ProductCardProps {
   product: Product;
   variant?: ProductCardVariant;
-  onAddToCart?: (productId: number, quantity: number) => void;
+  onAddToCart?: (
+    productId: number,
+    quantity: number,
+  ) => Promise<AddToCartResult>;
 }
 
 function ProductCard({
@@ -17,16 +21,38 @@ function ProductCard({
   onAddToCart,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
+
   const total = product.price * quantity;
 
   const isListing = variant === ProductCardVariant.Listing;
 
-  //sale and new price
+  // Sale and new price
   const isSale =
     product.originalPrice !== undefined &&
     product.originalPrice > product.price;
 
   const isNew = product.isNew === true;
+
+  const handleAddToCart = async () => {
+    if (!onAddToCart || isAdding) return;
+
+    setIsAdding(true);
+    setIsAdded(false);
+
+    const result = await onAddToCart(product.id, quantity);
+
+    if (result.success) {
+      setIsAdded(true);
+
+      window.setTimeout(() => {
+        setIsAdded(false);
+      }, 1500);
+    }
+
+    setIsAdding(false);
+  };
 
   return (
     <article
@@ -88,7 +114,7 @@ function ProductCard({
               ₹{product.price.toFixed(2)}
             </p>
 
-            {/* STAR RATING */}
+            {/* Star Rating */}
             <div className="flex items-center justify-center gap-1">
               <span className="text-sm tracking-wide text-yellow-500">
                 {"★".repeat(Math.round(product.rating ?? 0))}
@@ -112,20 +138,13 @@ function ProductCard({
 
             {/* Add to Cart */}
             <Button
-  variant={ButtonVariant.Primary}
-  className="!mt-2 !w-full !min-w-0 !h-10 px-2 text-sm"
-  onClick={() => {
-    console.log("Adding product:", {
-      id: product.id,
-      name: product.name,
-      quantity,
-    });
-
-    onAddToCart?.(product.id, quantity);
-  }}
->
-  Add To Cart
-</Button>
+              variant={ButtonVariant.Primary}
+              className="!mt-2 !h-10 !w-full !min-w-0 px-2 text-sm"
+              onClick={handleAddToCart}
+              disabled={isAdding}
+            >
+              {isAdding ? "Adding..." : isAdded ? "✓ Added" : "Add To Cart"}
+            </Button>
           </>
         ) : (
           <>
@@ -144,24 +163,43 @@ function ProductCard({
             <div className="quantity-container">
               <span className="quantity-label">QTY:</span>
 
-              <input type="number" value="1" min="1" readOnly />
+              <input
+                type="number"
+                value={quantity}
+                min="1"
+                onChange={(event) => {
+                  const value = event.target.value;
+
+                  if (value === "") {
+                    setQuantity(0);
+                    return;
+                  }
+
+                  const numericValue = Number(value);
+
+                  setQuantity(numericValue);
+                }}
+                onFocus={(event) => {
+                  if (quantity === 0) {
+                    event.target.select();
+                  }
+                }}
+                onBlur={() => {
+                  if (quantity < 1 || Number.isNaN(quantity)) {
+                    setQuantity(1);
+                  }
+                }}
+              />
             </div>
-
+            {/* Add to Cart */}
             <Button
-  variant={ButtonVariant.Primary}
-  className="!mt-2 !w-full !min-w-0 !h-10 px-2 text-sm"
-  onClick={() => {
-    console.log("Adding product:", {
-      id: product.id,
-      name: product.name,
-      quantity,
-    });
-
-    onAddToCart?.(product.id, quantity);
-  }}
->
-  Add To Cart
-</Button>
+              variant={ButtonVariant.Primary}
+              className="!mt-2 !h-10 !w-full !min-w-0 px-2 text-sm"
+              onClick={handleAddToCart}
+              disabled={isAdding}
+            >
+              {isAdding ? "Adding..." : isAdded ? "✓ Added" : "Add To Cart"}
+            </Button>
 
             <Button className="shopping-list">+ SHOPPING LIST</Button>
           </>

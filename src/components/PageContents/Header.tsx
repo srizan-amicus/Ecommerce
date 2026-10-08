@@ -51,27 +51,24 @@ function Header({ searchTerm, onSearchChange }: HeaderProps) {
             Home
           </Link>
 
-          <Link
-            to="/product-list"
-            className="transition hover:text-orange-600"
-          >
+          <Link to="/product-list" className="transition hover:text-orange-600">
             Product List
+          </Link>
+
+          <Link to="/Cart" className="transition hover:text-orange-600">
+            Cart
           </Link>
 
           <Link
             to="/checkout-hook-form"
             className="transition hover:text-orange-600"
           >
-            CheckoutHF
+            Checkout
           </Link>
 
-          <Link to="/checkout-controlled" className="transition hover:text-orange-600">
-            Controlled Form
-          </Link>
-
-          <span className="cursor-pointer text-lg transition hover:text-orange-600">
+          {/* <span className="cursor-pointer text-lg transition hover:text-orange-600">
             🛒
-          </span>
+          </span> */}
         </div>
       </div>
     </header>

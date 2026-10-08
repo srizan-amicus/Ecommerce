@@ -1,74 +1,129 @@
 import { useFormContext } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import Button from "../Common/Button";
 import type { CheckoutFormData } from "../../types/checkout";
+import type { CartItemApiResponse } from "../../api/cartApi";
 import { ButtonVariant } from "../../enums/button";
 
 type OrderSummaryProps = {
+  cartItems?: CartItemApiResponse[];
+  subtotal?: number;
+
   isFormValid?: boolean;
+
+  actionLabel?: string;
+  actionType?: "submit" | "button";
+  actionForm?: string;
+  onAction?: () => void;
+
+  showContinueShopping?: boolean;
 };
 
-function OrderSummary({ isFormValid }: OrderSummaryProps) {
+function OrderSummary({
+  cartItems = [],
+  subtotal = 0,
+  isFormValid,
+  actionLabel = "PLACE ORDER",
+  actionType = "submit",
+  actionForm = "checkout-form",
+  onAction,
+  showContinueShopping = false,
+}: OrderSummaryProps) {
   const formContext = useFormContext<CheckoutFormData>();
+  const navigate = useNavigate();
+
   const isValid = isFormValid ?? formContext?.formState.isValid ?? false;
+
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  const shipping = 15;
+
+  const taxRate = 0.08;
+
+  const tax = subtotal * taxRate;
+
+  const total = subtotal + shipping + tax;
+
+  const handleContinueShopping = () => {
+    navigate("/product-list");
+  };
 
   return (
     <section className="border border-gray-300 bg-white">
-      <div className="bg-[#1f1f1f] px-4 py-2 text-sm font-bold text-white">
+      {/* Header */}
+      <div className="bg-[#1f1f1f] px-4 py-3 text-base font-bold text-white">
         ORDER SUMMARY
       </div>
 
       <div className="p-4">
+        {/* Cart Items */}
         <div className="space-y-3 text-xs">
-          <div className="flex justify-between">
-            <span>Wireless Headphones x2</span>
-            <span>$99.98</span>
-          </div>
+          {cartItems.map((item) => (
+            <div key={item.cartItemId} className="flex justify-between gap-4">
+              <span>
+                {item.productName} x{item.quantity}
+              </span>
 
-          <div className="flex justify-between">
-            <span>Smart Watch Pro x1</span>
-            <span>$199.99</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>USB-C Hub Adapter x3</span>
-            <span>$104.97</span>
-          </div>
+              <span>₹{item.itemSubtotal.toFixed(2)}</span>
+            </div>
+          ))}
         </div>
 
         <div className="my-4 border-t border-gray-300" />
 
+        {/* Summary */}
         <div className="space-y-3 text-xs">
           <div className="flex justify-between">
-            <span>Subtotal:</span>
-            <span>$404.94</span>
+            <span>Subtotal ({itemCount} items):</span>
+
+            <span>₹{subtotal.toFixed(2)}</span>
           </div>
 
           <div className="flex justify-between">
             <span>Shipping:</span>
-            <span>$5.00</span>
+
+            <span>₹{shipping.toFixed(2)}</span>
           </div>
 
           <div className="flex justify-between">
-            <span>Tax:</span>
-            <span>$32.40</span>
+            <span>Tax (8%):</span>
+
+            <span>₹{tax.toFixed(2)}</span>
           </div>
         </div>
 
         <div className="my-3 border-t-2 border-orange-500" />
 
-        <div className="flex justify-between text-base font-bold">
+        {/* Total */}
+        <div className="flex justify-between text-xl font-bold">
           <span>Total:</span>
-          <span className="text-orange-600">$442.34</span>
+
+          <span className="text-orange-600">₹{total.toFixed(2)}</span>
         </div>
 
+        {/* Primary Action */}
         <Button
-          type="submit"
+          type={actionType}
+          form={actionForm}
           variant={ButtonVariant.Order}
-          form="checkout-form"
-          disabled={!isValid}
+          disabled={actionType === "submit" && !isValid}
+          onClick={onAction}
+          className="mt-5 w-full"
         >
-          PLACE ORDER
+          {actionLabel}
         </Button>
+
+        {/* Continue Shopping */}
+        {showContinueShopping && (
+          <Button
+            type="button"
+            variant={ButtonVariant.Order}
+            onClick={handleContinueShopping}
+            className="mt-3 w-full !bg-[#1f1f1f] hover:!bg-black"
+          >
+            CONTINUE SHOPPING
+          </Button>
+        )}
       </div>
     </section>
   );

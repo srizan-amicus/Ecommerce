@@ -1,5 +1,7 @@
 import CartItem from "./CartItem";
 import type { CartItemApiResponse } from "../../api/cartApi";
+import OrderSummary from "../Checkout/OrderSummary";
+import { useNavigate } from "react-router-dom";
 
 interface CartProps {
   cartItems: CartItemApiResponse[];
@@ -20,6 +22,11 @@ function Cart({
   onRemove,
   onClearCart,
 }: CartProps) {
+  //total dynamic number
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  const navigate = useNavigate();
+  // Initial cart loading state
   if (isLoading) {
     return (
       <main className="min-h-screen bg-gray-50 px-4 py-10">
@@ -40,7 +47,9 @@ function Cart({
     );
   }
 
-  if (error) {
+  // Only show the full-page error when the cart itself
+  // could not be loaded.
+  if (error && cartItems.length === 0) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
         <div className="text-center">
@@ -54,6 +63,7 @@ function Cart({
     );
   }
 
+  // Empty cart state
   if (cartItems.length === 0) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -75,7 +85,14 @@ function Cart({
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Shopping Cart ({itemCount} Items)
+            </h1>
+
+            {/* Operation error */}
+            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          </div>
 
           <button
             type="button"
@@ -86,15 +103,18 @@ function Cart({
           </button>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3">
           {/* Cart Items */}
-          <section className="rounded-lg bg-white p-6 shadow-sm lg:col-span-2">
+          <section className="lg:col-span-2">
             {/* Column Headers */}
-            <div className="hidden grid-cols-4 border-b border-gray-200 pb-4 text-sm font-medium text-gray-500 md:grid">
-              <span>Product</span>
-              <span>Unit Price</span>
-              <span>Qty</span>
-              <span>Total</span>
+            <div className="hidden grid-cols-[2.2fr_1fr_1fr_1fr] bg-[#1f1f1f] px-4 py-3 text-sm font-bold text-white md:grid">
+              <span className="flex items-center">Product</span>
+
+              <span className="flex items-center">Unit Price</span>
+
+              <span className="flex items-center justify-center">Qty</span>
+
+              <span className="flex items-center">Total</span>
             </div>
 
             {cartItems.map((item) => (
@@ -108,39 +128,14 @@ function Cart({
           </section>
 
           {/* Order Summary */}
-          <aside className="h-fit rounded-lg bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Order Summary
-            </h2>
-
-            <div className="mt-6 space-y-4">
-              <div className="flex justify-between text-gray-600">
-                <span>Subtotal</span>
-
-                <span>₹{subtotal.toLocaleString("en-IN")}</span>
-              </div>
-
-              <div className="flex justify-between text-gray-600">
-                <span>Shipping</span>
-                <span>Calculated at checkout</span>
-              </div>
-
-              <div className="border-t border-gray-200 pt-4">
-                <div className="flex justify-between text-lg font-semibold text-gray-900">
-                  <span>Total</span>
-
-                  <span>₹{subtotal.toLocaleString("en-IN")}</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="w-full rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
-              >
-                Proceed to Checkout
-              </button>
-            </div>
-          </aside>
+          <OrderSummary
+            cartItems={cartItems}
+            subtotal={subtotal}
+            actionLabel="PROCEED TO CHECKOUT"
+            actionType="button"
+            onAction={() => navigate("/checkout-hook-form")}
+            showContinueShopping
+          />
         </div>
       </div>
     </main>

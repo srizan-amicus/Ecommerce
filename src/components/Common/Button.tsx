@@ -19,7 +19,7 @@ function Button({
   className = "",
   form,
 }: ButtonProps) {
-  const baseStyles = "w-48 h-12 font-bold text-base transition";
+  const baseStyles = "w-48 h-12 font-bold text-base transition cursor-pointer";
 
   const variantStyles = {
     [ButtonVariant.Primary]: "bg-orange-500 text-white hover:bg-orange-600",

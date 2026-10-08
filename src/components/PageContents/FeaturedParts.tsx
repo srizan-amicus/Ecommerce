@@ -5,8 +5,15 @@ import type { Swiper as SwiperType } from "swiper";
 import ProductCard from "../Products/ProductCards";
 import useProducts from "../../hooks/useProducts";
 import "swiper/css";
+import type { AddToCartResult } from "../../types/cart";
 
-function FeaturedParts() {
+interface FeaturedPartsProps {
+  onAddToCart: (
+    productId: number,
+    quantity: number,
+  ) => Promise<AddToCartResult>;
+}
+function FeaturedParts({ onAddToCart }: FeaturedPartsProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
   const { products: apiProducts, loading } = useProducts();
@@ -68,7 +75,7 @@ function FeaturedParts() {
               >
                 {apiProducts.map((product) => (
                   <SwiperSlide key={`${product.id}-${product.name}`}>
-                    <ProductCard product={product} />
+                    <ProductCard product={product} onAddToCart={onAddToCart} />
                   </SwiperSlide>
                 ))}
               </Swiper>

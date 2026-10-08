@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Showcase from "../pages/showcase";
 import Products from "../pages/Products";
@@ -11,9 +11,12 @@ import CheckoutHookForm from "../pages/checkout-hook-form";
 import useAuthBootstrap from "../hooks/useAuthBootstrap";
 import useCart from "../hooks/useCart";
 import Cart from "./Cart/Cart";
+import Toast from "./Common/Toast";
+import type { AddToCartResult } from "../types/cart";
 
 function AppContent() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const { isAuthLoading } = useAuthBootstrap();
 
@@ -30,6 +33,25 @@ function AppContent() {
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const handleAddToCart = useCallback(
+    async (productId: number, quantity: number): Promise<AddToCartResult> => {
+      const result = await addToCart(productId, quantity);
+
+      if (result.success) {
+        setToastMessage("Item successfully added to the cart!");
+      } else if (result.error) {
+        setToastMessage(result.error);
+      }
+
+      return result;
+    },
+    [addToCart],
+  );
+
+  const handleCloseToast = useCallback(() => {
+    setToastMessage(null);
+  }, []);
+
   if (isAuthLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -42,8 +64,12 @@ function AppContent() {
     <>
       <Header searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={handleCloseToast} />
+      )}
+
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home onAddToCart={handleAddToCart} />} />
 
         <Route path="/showcase" element={<Showcase />} />
 
@@ -51,12 +77,22 @@ function AppContent() {
 
         <Route
           path="/product-list"
-          element={<ProductList searchTerm={debouncedSearchTerm} onAddToCart={addToCart} />}
+          element={
+            <ProductList
+              searchTerm={debouncedSearchTerm}
+              onAddToCart={handleAddToCart}
+            />
+          }
         />
 
         <Route path="/checkout-controlled" element={<CheckoutControlled />} />
 
-        <Route path="/checkout-hook-form" element={<CheckoutHookForm />} />
+        <Route
+          path="/checkout-hook-form"
+          element={
+            <CheckoutHookForm cartItems={cartItems} subtotal={subtotal} />
+          }
+        />
 
         <Route
           path="/cart"

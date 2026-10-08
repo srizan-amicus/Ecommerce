@@ -1,4 +1,7 @@
 import type { Product } from "../types/product";
+import { buildQueryString } from "../utils/buildQueryString";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export interface ProductQueryParams {
   search?: string;
@@ -38,50 +41,21 @@ export async function fetchProductsFromApi(
   params: ProductQueryParams = {},
   signal?: AbortSignal,
 ): Promise<ProductPagedResponse> {
-  const queryParams = new URLSearchParams();
-
-  if (params.search) {
-    queryParams.append("Search", params.search);
-  }
-
-  if (params.categoryId !== undefined) {
-    queryParams.append("CategoryId", String(params.categoryId));
-  }
-
-  if (params.brandId !== undefined) {
-    queryParams.append("BrandId", String(params.brandId));
-  }
-
-  if (params.minPrice !== undefined) {
-    queryParams.append("MinPrice", String(params.minPrice));
-  }
-
-  if (params.maxPrice !== undefined) {
-    queryParams.append("MaxPrice", String(params.maxPrice));
-  }
-
-  if (params.minRating !== undefined) {
-    queryParams.append("MinRating", String(params.minRating));
-  }
-
-  if (params.sortBy) {
-    queryParams.append("SortBy", params.sortBy);
-  }
-
-  if (params.sortOrder) {
-    queryParams.append("SortOrder", params.sortOrder);
-  }
-
-  if (params.page !== undefined) {
-    queryParams.append("Page", String(params.page));
-  }
-
-  if (params.pageSize !== undefined) {
-    queryParams.append("PageSize", String(params.pageSize));
-  }
+  const queryString = buildQueryString(params, {
+    search: "Search",
+    categoryId: "CategoryId",
+    brandId: "BrandId",
+    minPrice: "MinPrice",
+    maxPrice: "MaxPrice",
+    minRating: "MinRating",
+    sortBy: "SortBy",
+    sortOrder: "SortOrder",
+    page: "Page",
+    pageSize: "PageSize",
+  });
 
   const response = await fetch(
-    `https://training-ecom1-a9a2cmbsefdvgwha.centralindia-01.azurewebsites.net/api/v1/products/search?${queryParams.toString()}`,
+    `${API_BASE_URL}/api/v1/products/search?${queryString}`,
     {
       signal,
     },
@@ -104,9 +78,7 @@ export async function fetchProductsFromApi(
       id: product.productId,
       name: product.name,
       price: product.price,
-      imageUrl: product.imagePath
-        ? `https://training-ecom1-a9a2cmbsefdvgwha.centralindia-01.azurewebsites.net/${product.imagePath}`
-        : "",
+      imageUrl: product.imagePath ? `${API_BASE_URL}/${product.imagePath}` : "",
       category: product.categoryName,
       categoryId: product.categoryId,
       brand: product.brandName,

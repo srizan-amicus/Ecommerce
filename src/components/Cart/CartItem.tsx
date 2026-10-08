@@ -3,32 +3,25 @@ import QuantitySelector from "../Quantity/QuantitySelector";
 
 interface CartItemProps {
   item: CartItemApiResponse;
-  onQuantityChange: (
-    productId: number,
-    quantity: number,
-  ) => void;
+  onQuantityChange: (productId: number, quantity: number) => void;
   onRemove: (productId: number) => void;
 }
 
-function CartItem({
-  item,
-  onQuantityChange,
-  onRemove,
-}: CartItemProps) {
+function CartItem({ item, onQuantityChange, onRemove }: CartItemProps) {
   return (
-    <div className="grid grid-cols-1 items-center gap-4 border-b border-gray-200 py-5 md:grid-cols-4">
+    <div className="mb-2 grid grid-cols-1 items-center gap-4 border border-gray-300 bg-white px-4 py-4 md:grid-cols-[2.2fr_1fr_1fr_1fr]">
       {/* Product */}
       <div className="flex items-center gap-4">
-        <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
-          <span className="text-sm text-gray-400">
-            Image
-          </span>
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+          <img
+            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600"
+            alt={item.productName}
+            className="h-full w-full object-contain"
+          />
         </div>
 
         <div>
-          <h3 className="font-medium text-gray-900">
-            {item.productName}
-          </h3>
+          <h3 className="font-bold text-gray-900">{item.productName}</h3>
 
           <button
             type="button"
@@ -41,25 +34,18 @@ function CartItem({
       </div>
 
       {/* Unit Price */}
-      <div className="text-gray-700">
-        ₹{item.price.toLocaleString("en-IN")}
-      </div>
+      <div className="text-gray-700">₹{item.price.toLocaleString("en-IN")}</div>
 
       {/* Quantity */}
-      <div>
+      <div className="flex justify-center">
         <QuantitySelector
           quantity={item.quantity}
-          onChange={(quantity) =>
-            onQuantityChange(
-              item.productId,
-              quantity,
-            )
-          }
+          onChange={(quantity) => onQuantityChange(item.productId, quantity)}
         />
       </div>
 
       {/* Total */}
-      <div className="font-semibold text-gray-900">
+      <div className="flex items-center font-semibold text-orange-600">
         ₹{item.itemSubtotal.toLocaleString("en-IN")}
       </div>
     </div>

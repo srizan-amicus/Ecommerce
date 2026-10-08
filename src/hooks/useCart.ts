@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   addCartItem,
   clearCart,
@@ -7,71 +7,83 @@ import {
   updateCartItem,
 } from "../api/cartApi";
 import type { CartItemApiResponse } from "../api/cartApi";
+import type { AddToCartResult } from "../types/cart";
+import useFetch from "./useFetch";
 
 export default function useCart() {
-  const [cartItems, setCartItems] = useState<CartItemApiResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: cartData,
+    loading: isLoading,
+    error: fetchError,
+    execute: executeCart,
+    setData: setCartItems,
+  } = useFetch<CartItemApiResponse[]>(getCart);
+
   const [error, setError] = useState<string | null>(null);
 
-  // Initial cart loading
-  useEffect(() => {
-    let cancelled = false;
+  const cartItems = cartData ?? [];
 
-    async function loadInitialCart() {
-      try {
-        const data = await getCart();
-
-        if (!cancelled) {
-          setCartItems(data);
-        }
-      } catch (error) {
-        console.error("Failed to load cart:", error);
-
-        if (!cancelled) {
-          setError("Failed to load cart.");
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    loadInitialCart();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Refresh cart after cart operations
-  async function fetchCart() {
+  // Refresh cart data from the API
+  const fetchCart = useCallback(async (): Promise<boolean> => {
     try {
       setError(null);
 
-      const data = await getCart();
-
-      setCartItems(data);
+      return await executeCart(undefined, {
+        silent: true,
+      });
     } catch (error) {
       console.error("Failed to refresh cart:", error);
-      setError("Failed to refresh cart.");
-    }
-  }
 
-  const addToCart = async (productId: number, quantity = 1) => {
+      return false;
+    }
+  }, [executeCart]);
+
+  // Add a product to the cart
+  const addToCart = async (
+    productId: number,
+    quantity = 1,
+  ): Promise<AddToCartResult> => {
     try {
       setError(null);
 
       await addCartItem(productId, quantity);
 
-      await fetchCart();
+      const refreshed = await fetchCart();
+
+      if (!refreshed) {
+        const errorMessage = "Item added, but the cart could not be refreshed.";
+
+        setError(errorMessage);
+
+        return {
+          success: false,
+          error: errorMessage,
+        };
+      }
+
+      return {
+        success: true,
+      };
     } catch (error) {
       console.error("Failed to add item:", error);
-      setError("Failed to add item to cart.");
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to add item to cart.";
+
+      setError(errorMessage);
+
+      return {
+        success: false,
+        error: errorMessage,
+      };
     }
   };
 
-  const updateQuantity = async (productId: number, quantity: number) => {
+  // Update the quantity of an existing cart item
+  const updateQuantity = async (
+    productId: number,
+    quantity: number,
+  ): Promise<void> => {
     if (quantity < 1) {
       return;
     }
@@ -81,27 +93,39 @@ export default function useCart() {
 
       await updateCartItem(productId, quantity);
 
-      await fetchCart();
+      const refreshed = await fetchCart();
+
+      if (!refreshed) {
+        setError("Quantity updated, but the cart could not be refreshed.");
+      }
     } catch (error) {
       console.error("Failed to update quantity:", error);
+
       setError("Failed to update quantity.");
     }
   };
 
-  const removeFromCart = async (productId: number) => {
+  // Remove a product from the cart
+  const removeFromCart = async (productId: number): Promise<void> => {
     try {
       setError(null);
 
       await removeCartItem(productId);
 
-      await fetchCart();
+      const refreshed = await fetchCart();
+
+      if (!refreshed) {
+        setError("Item removed, but the cart could not be refreshed.");
+      }
     } catch (error) {
       console.error("Failed to remove item:", error);
+
       setError("Failed to remove item.");
     }
   };
 
-  const emptyCart = async () => {
+  // Remove all products from the cart
+  const emptyCart = async (): Promise<void> => {
     try {
       setError(null);
 
@@ -110,10 +134,12 @@ export default function useCart() {
       setCartItems([]);
     } catch (error) {
       console.error("Failed to clear cart:", error);
+
       setError("Failed to clear cart.");
     }
   };
 
+  // Derived value — no separate state is needed
   const subtotal = cartItems.reduce(
     (total, item) => total + item.itemSubtotal,
     0,
@@ -123,7 +149,7 @@ export default function useCart() {
     cartItems,
     subtotal,
     isLoading,
-    error,
+    error: error ?? fetchError,
     fetchCart,
     addToCart,
     updateQuantity,

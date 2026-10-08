@@ -3,7 +3,7 @@
 
 A responsive ecommerce web application built with React and TypeScript.
 
-The application provides a reusable ecommerce UI with API-driven products and categories, product search, filtering, sorting, API-based pagination, product ratings, quantity management, loading states, error handling, empty states, and responsive layouts.
+The application provides a reusable ecommerce experience with API-driven products, categories, search, filtering, sorting, pagination, authentication, cart management, checkout forms, loading states, error handling, empty states, responsive layouts, and reusable component architecture.
 
 ---
 
@@ -14,16 +14,18 @@ The application provides a reusable ecommerce UI with API-driven products and ca
 - Vite
 - Tailwind CSS
 - React Router
+- React Hook Form
 - Swiper
 - REST API
+- AbortController
 
 ---
 
-## API
+# API Integration
 
-The application uses the provided Ecommerce API for product and category data.
-The API is responsible for:
+The application integrates with the provided Ecommerce API for:
 
+- Authentication
 - Product data
 - Product search
 - Category filtering
@@ -32,24 +34,66 @@ The API is responsible for:
 - Rating filtering
 - Product sorting
 - API-based pagination
-- Category data
+- Cart management
+- Cart quantity updates
+- Cart removal
+- Cart clearing
+- Cart count
+- Cart subtotal
 
-API-specific response data is transformed into the application's reusable `Product` type before being used by the UI.
+Additional location data for checkout is retrieved from the CountriesNow API.
 
 ---
 
-## Routing
+# Application Architecture
+
+The application separates UI, business logic, API communication, and reusable state management.
+
+The general flow is:
+
+```text
+React Component
+      ↓
+Custom Hook
+      ↓
+API Function
+      ↓
+API Client
+      ↓
+REST API
+````
+
+For example:
+
+```text
+ProductList
+      ↓
+useProductList
+      ↓
+useProducts
+      ↓
+productsApi
+      ↓
+Ecommerce API
+```
+
+This keeps API-specific logic outside React components and keeps components focused mainly on rendering.
+
+---
+
+# Routing
 
 The application uses React Router for client-side navigation.
 
-| Route | Description |
-|---|---|
-| `/` | Ecommerce homepage |
-| `/products` | Featured products page |
-| `/product-list` | Product listing with search, filtering, sorting and pagination |
-| `/showcase` | Reusable UI component showcase |
-| `/checkout-controlled` | Controlled checkout form |
-| `/checkout-hook-form` | React Hook Form checkout |
+| Route                  | Description                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| `/`                    | Ecommerce homepage                                             |
+| `/products`            | Products / featured products page                              |
+| `/product-list`        | Product listing with search, filtering, sorting and pagination |
+| `/showcase`            | Reusable UI component showcase                                 |
+| `/checkout-controlled` | Controlled checkout form                                       |
+| `/checkout-hook-form`  | React Hook Form checkout                                       |
+| `/cart`                | Shopping cart                                                  |
 
 ---
 
@@ -59,21 +103,26 @@ The application uses React Router for client-side navigation.
 
 The homepage contains:
 
-- Responsive header
-- Reusable search bar
-- Hero section
-- Hero search
-- Quick links
-- Featured products carousel
-- Popular categories
-- Footer
-- Responsive desktop, tablet and mobile layouts
+* Responsive header
+* Reusable search bar
+* Hero section
+* Hero search
+* Quick links
+* Featured products carousel
+* Popular categories
+* Footer
+* Responsive desktop, tablet and mobile layouts
+* API-driven featured products
+* Add to cart functionality
+* Toast feedback after cart operations
 
-### Dynamic Featured Products
+---
+
+## Dynamic Featured Products
 
 Featured products are fetched dynamically from the Ecommerce API.
 
-The data flows through:
+The data flow is:
 
 ```text
 FeaturedParts
@@ -83,13 +132,15 @@ useProducts
 productsApi
       ↓
 Ecommerce API
-````
+```
 
 Loading skeletons are displayed while the products are being fetched.
 
+Featured products use the reusable `ProductCard` component.
+
 ---
 
-## Category Navigation
+# Category Navigation
 
 The Home Page provides category cards.
 
@@ -105,9 +156,9 @@ The Product Listing page reads the category ID and automatically applies the cat
 
 ---
 
-## Search
+# Search
 
-The application provides reusable search functionality in both:
+The application provides reusable search functionality in:
 
 * Header
 * Hero section
@@ -122,11 +173,11 @@ Example:
 /product-list?search=iphone
 ```
 
-The Product Listing page automatically reads the search query and sends it to the API.
+The Product Listing page reads the search query and sends it to the API.
 
 ---
 
-## Product Listing
+# Product Listing
 
 The Product Listing page provides the main product browsing experience.
 
@@ -149,6 +200,7 @@ Features include:
 * Retry functionality
 * Refresh functionality
 * Responsive filters
+* AbortController request cancellation
 
 ---
 
@@ -169,12 +221,16 @@ ProductList
       ↓
 useProductList
       ↓
+useProducts
+      ↓
 productsApi
       ↓
 Ecommerce API
 ```
 
 The search input is debounced by `useDebounce` with a 500ms delay.
+
+This prevents an API request from being triggered for every individual keystroke.
 
 The search value is sent to the API using the `Search` query parameter.
 
@@ -192,12 +248,12 @@ The Product Listing page supports filtering by:
 
 * Category
 * Brand
-* Price range
+* Price
 * Rating
 
-Filtering is performed by the backend API rather than filtering the entire product collection on the client.
+Filtering is performed by the backend API rather than filtering the complete product collection on the client.
 
-### Category
+## Category
 
 Category filtering sends:
 
@@ -207,7 +263,7 @@ CategoryId
 
 to the API.
 
-### Brand
+## Brand
 
 Brand filtering sends:
 
@@ -217,7 +273,7 @@ BrandId
 
 to the API.
 
-### Price
+## Price
 
 The available price ranges are:
 
@@ -234,7 +290,7 @@ MaxPrice
 
 before being sent to the API.
 
-### Rating
+## Rating
 
 Rating filtering sends:
 
@@ -265,9 +321,7 @@ Page
 PageSize
 ```
 
-The query is constructed in `useProductList`.
-
-Example flow:
+The flow is:
 
 ```text
 Search
@@ -284,9 +338,9 @@ Sort
    +
 Pagination
         ↓
-   API Query
+    API Query
         ↓
-   Ecommerce API
+ Ecommerce API
 ```
 
 This allows all product listing operations to work together.
@@ -349,7 +403,7 @@ totalRecords
 totalPages
 ```
 
-The frontend uses `totalPages` to render the pagination controls.
+The frontend uses `totalPages` to render pagination controls.
 
 Flow:
 
@@ -360,9 +414,11 @@ currentPage
       ↓
 useProductList
       ↓
+useProducts
+      ↓
 productsApi
       ↓
-API
+Ecommerce API
       ↓
 8 products for current page
       +
@@ -417,18 +473,21 @@ The Home breadcrumb navigates back to:
 
 ## Default Variant
 
-Used on the regular products page.
+Used on the regular products / featured products experience.
 
 Displays:
 
 * Product image
 * Product name
-* Product price
+* Product SKU
 * Product rating
-* Quantity selector
-* Dynamic total price
+* Quantity input
 * Add to Cart
 * Shopping List
+
+The default variant supports direct quantity entry.
+
+Invalid quantities such as `0` or negative values are corrected when the input loses focus.
 
 ## Listing Variant
 
@@ -455,11 +514,26 @@ ProductCardVariant.Listing;
 
 ---
 
+# Product Image Fallback
+
+Product cards support a fallback image when an API product does not provide an image URL.
+
+The image logic is:
+
+```tsx
+product.imageUrl ||
+"https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600"
+```
+
+This prevents broken or empty image areas when product image data is unavailable.
+
+---
+
 # Product Rating
 
-Product ratings are provided by the API.
+Product ratings are provided by the Ecommerce API.
 
-The rating is displayed on product cards using star-based UI.
+Ratings are displayed using star-based UI.
 
 Example:
 
@@ -467,13 +541,13 @@ Example:
 ★★★★☆ 4.2
 ```
 
-The rating is also available to the Product Listing rating filter.
+The rating is also used by the Product Listing rating filter.
 
 ---
 
-# QuantitySelector
+# Quantity Management
 
-A reusable quantity control used for managing product quantity.
+The application uses a reusable `QuantitySelector` component for quantity management where appropriate.
 
 It supports:
 
@@ -493,92 +567,287 @@ Example:
 />
 ```
 
+The Product Card default variant also supports direct numeric quantity entry.
+
 ---
 
-# API Integration
+# Cart
 
-The API logic is separated from React components.
+The application integrates the cart with the Ecommerce API.
 
-The main product API flow is:
+The cart API provides:
 
 ```text
-ProductList
-      ↓
-useProductList
-      ↓
-useProducts
-      ↓
-productsApi
-      ↓
+GET    /api/v1/cart
+DELETE /api/v1/cart
+
+POST   /api/v1/cart/items
+PUT    /api/v1/cart/items/{productId}
+DELETE /api/v1/cart/items/{productId}
+
+GET    /api/v1/cart/count
+GET    /api/v1/cart/subtotal
+```
+
+---
+
+## Cart Features
+
+The Cart page supports:
+
+* Displaying cart items
+* Product name
+* Unit price
+* Quantity
+* Item subtotal
+* Total item count
+* Quantity updates
+* Removing individual items
+* Clearing the entire cart
+* Cart subtotal
+* Proceeding to checkout
+* Cart error handling
+* Empty cart state
+* Initial loading skeleton
+
+---
+
+## Cart Flow
+
+The cart data flow is:
+
+```text
+Cart Page
+    ↓
+useCart
+    ↓
+cartApi
+    ↓
+apiClient
+    ↓
 Ecommerce API
 ```
 
-`productsApi.ts` is responsible for:
+Adding an item:
 
-* Building query parameters
-* Calling the API
-* Handling API responses
-* Mapping API products into the application's `Product` type
+```text
+ProductCard
+    ↓
+handleAddToCart
+    ↓
+useCart.addToCart
+    ↓
+cartApi.addCartItem
+    ↓
+POST /api/v1/cart/items
+    ↓
+refresh cart
+```
 
-The API response is transformed before being used by the UI.
+---
+
+# Cart Error Handling
+
+Backend validation messages are preserved and displayed to the user.
+
+For example, if the requested quantity exceeds available stock, the API may return:
+
+```text
+Requested quantity exceeds available stock.
+```
+
+The frontend displays the backend message instead of replacing every error with a generic "Out of Stock" message.
+
+This allows the frontend to accurately represent backend validation.
+
+---
+
+# Cart Refresh
+
+After operations such as:
+
+* Add to cart
+* Update quantity
+* Remove item
+
+the cart is refreshed from the API.
+
+Cart refreshes use a silent fetch so that the existing cart UI does not unnecessarily flash the loading skeleton.
+
+Initial cart loading still displays the loading skeleton.
+
+---
+
+# Authentication
+
+The application integrates with the Ecommerce API authentication system.
+
+Authentication includes:
+
+* Login
+* Access token
+* Refresh token
+* Logout
+* Token storage
+* Automatic access token refresh
+
+Authentication data is stored using reusable authentication storage utilities.
+
+---
+
+# API Client
+
+Authenticated API requests are centralized through:
+
+```text
+apiClient.ts
+```
+
+The API client:
+
+* Adds the access token to requests
+* Sets JSON headers
+* Detects HTTP `401 Unauthorized`
+* Attempts to refresh the access token
+* Stores the new authentication response
+* Retries the original request using the new access token
+* Clears authentication when refresh fails
+
+The flow is:
+
+```text
+API Request
+     ↓
+Access Token
+     ↓
+Ecommerce API
+     ↓
+401?
+ ┌───┴────┐
+ No       Yes
+ ↓         ↓
+Return   Refresh Token
+           ↓
+       New Access Token
+           ↓
+       Retry Request
+```
+
+---
+
+# Refresh Token Concurrency
+
+The API client prevents multiple simultaneous requests from performing multiple refresh operations.
+
+It uses a shared refresh promise:
+
+```tsx
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+```
+
+When multiple requests receive `401` responses at the same time, they wait for the same refresh operation rather than starting multiple refresh requests.
+
+---
+
+# Custom `useFetch` Hook
+
+The application uses a reusable `useFetch` hook for React-side API state management.
+
+It centralizes:
+
+* Loading state
+* Error state
+* Response data
+* Request execution
+* Request cancellation
+* Silent refreshes
+
+The general flow is:
+
+```text
+Component
+    ↓
+Custom Hook
+    ↓
+useFetch
+    ↓
+API Function
+    ↓
+REST API
+```
+
+Example:
+
+```tsx
+const {
+  data,
+  loading,
+  error,
+  execute,
+} = useFetch(fetchFunction);
+```
+
+---
+
+# AbortController
+
+API requests support `AbortController`.
+
+This prevents unnecessary requests from continuing when they are no longer relevant.
 
 For example:
 
 ```text
-API Product
-     ↓
-productId
-name
-categoryName
-brandName
-price
-rating
-imagePath
-     ↓
-Application Product
-     ↓
-id
-name
-category
-brand
-price
-rating
-imageUrl
+Request A starts
+      ↓
+Request B starts
+      ↓
+Request A is cancelled
+      ↓
+Request B continues
 ```
 
-This keeps API-specific structures separate from the application's UI model.
+The `useFetch` hook manages the active `AbortController`.
+
+This is particularly useful when:
+
+* Filters change quickly
+* Search parameters change
+* A component unmounts
+* A newer API request replaces an older request
+
+Aborted requests are ignored instead of being treated as normal API errors.
 
 ---
 
 # Loading, Error and Empty States
 
-The Product Listing handles multiple API states.
+The application handles multiple API states.
 
 ## Loading
 
-While products are being fetched, product skeleton cards are displayed.
+While data is being fetched, skeleton UI is displayed.
 
 ```text
 API Request
     ↓
 Loading
     ↓
-ProductSkeleton
+Skeleton
 ```
 
 ## Error
 
-If the API request fails:
+If an API request fails:
 
 ```text
 API Error
     ↓
 Error Message
     +
-Try Again
+Retry
 ```
-
-The user can retry the API request.
 
 ## Empty Results
 
@@ -590,11 +859,12 @@ No matching products
 EmptyState
 ```
 
-This handles cases such as:
+This handles:
 
 * No search results
 * No products for selected filters
 * No products for a combination of filters
+* Empty cart
 
 ---
 
@@ -605,11 +875,124 @@ The Product Listing page includes a Refresh button.
 When clicked:
 
 1. A new API request is started.
-2. Loading state is displayed.
-3. Products are fetched again.
-4. The product list is updated.
+2. Products are fetched again.
+3. The product list is updated.
 
-The refresh functionality uses the same API fetching logic as the initial product request.
+The refresh functionality uses the same fetching logic as the initial request.
+
+---
+
+# Checkout
+
+The application contains two checkout implementations for demonstrating different React form approaches.
+
+## Controlled Checkout
+
+The controlled checkout demonstrates traditional React state-based form management.
+
+Route:
+
+```text
+/checkout-controlled
+```
+
+## React Hook Form Checkout
+
+The React Hook Form implementation uses:
+
+```text
+react-hook-form
+```
+
+Route:
+
+```text
+/checkout-hook-form
+```
+
+It uses:
+
+* `useForm`
+* `register`
+* `handleSubmit`
+* `FormProvider`
+* `useWatch`
+* Validation
+* Form state
+* Error handling
+
+---
+
+# Checkout Location Data
+
+Checkout location fields use the CountriesNow API.
+
+The application dynamically loads:
+
+```text
+Countries
+    ↓
+States
+    ↓
+Cities
+```
+
+The flow is:
+
+```text
+Select Country
+      ↓
+Load States
+      ↓
+Select State
+      ↓
+Load Cities
+```
+
+Loading states are displayed while states and cities are being retrieved.
+
+---
+
+# Checkout Form Validation
+
+The React Hook Form checkout validates shipping information including:
+
+* Full name
+* Email
+* Phone
+* Street address
+* Apartment
+* Country
+* State
+* City
+* ZIP code
+* Shipping method
+
+The form uses:
+
+```tsx
+useForm<CheckoutFormData>({
+  mode: "onChange",
+});
+```
+
+This allows validation state to update as the user interacts with the form.
+
+---
+
+# Toast Notifications
+
+The application provides reusable toast feedback for important operations.
+
+For example, after successfully adding an item to the cart:
+
+```text
+Item successfully added to the cart!
+```
+
+Backend/API errors can also be displayed through the toast system.
+
+The toast styling uses the application's orange theme.
 
 ---
 
@@ -623,6 +1006,7 @@ A reusable button component supporting:
 * Secondary
 * Outline
 * Danger
+* Order
 
 It supports:
 
@@ -630,6 +1014,8 @@ It supports:
 * `children`
 * `disabled`
 * `onClick`
+* `type`
+* `form`
 * Custom `className`
 
 Button variants are centralized using:
@@ -639,7 +1025,10 @@ ButtonVariant.Primary;
 ButtonVariant.Secondary;
 ButtonVariant.Outline;
 ButtonVariant.Danger;
+ButtonVariant.Order;
 ```
+
+Buttons also provide appropriate pointer and disabled cursor states.
 
 ---
 
@@ -676,13 +1065,11 @@ Example:
 
 Provides category-based filtering for the Product Listing page.
 
-It receives category options and the selected category through props and reports changes through:
+It receives category options and selected category through props and reports changes through:
 
 ```tsx
 onCategoryChange
 ```
-
-Category selection is connected to the API using `CategoryId`.
 
 ---
 
@@ -715,7 +1102,7 @@ Combines:
 
 into a reusable filtering section.
 
-The same component is used for:
+The same filtering logic supports:
 
 * Desktop filters
 * Mobile filters
@@ -779,7 +1166,30 @@ Displayed when no products match the current search or filter conditions.
 
 ## QuantitySelector
 
-Reusable quantity control used inside product cards and checkout-related UI.
+Reusable quantity control used for product quantity management.
+
+It supports:
+
+* Increase quantity
+* Decrease quantity
+* Minimum quantity
+* Maximum quantity
+* Disabled controls
+
+---
+
+## CartItem
+
+Responsible for displaying an individual cart item.
+
+It handles:
+
+* Product name
+* Product image/fallback image
+* Unit price
+* Quantity
+* Item subtotal
+* Remove action
 
 ---
 
@@ -834,7 +1244,7 @@ It manages:
 * Applying filters
 * Clearing filters
 
-This keeps filter state separate from the UI.
+This keeps filter state separate from UI rendering.
 
 ---
 
@@ -869,8 +1279,6 @@ useProductList
         Ecommerce API
 ```
 
-This keeps the `ProductList` page focused mainly on rendering the UI.
-
 ---
 
 ## useDebounce
@@ -882,10 +1290,168 @@ The search input uses a 500ms debounce.
 Example:
 
 ```tsx
-const debouncedSearchTerm = useDebounce(searchTerm, 500);
+const debouncedSearchTerm = useDebounce(
+  searchTerm,
+  500
+);
 ```
 
-This prevents the product listing from reacting to every individual keystroke immediately.
+---
+
+## useFetch
+
+Reusable API state and request management hook.
+
+It manages:
+
+* Data
+* Loading
+* Errors
+* Request execution
+* AbortController
+* Silent refreshes
+
+It is used by other custom hooks such as:
+
+```text
+useProducts
+useLocationOptions
+useCart
+```
+
+---
+
+## useCart
+
+Responsible for cart state and cart operations.
+
+It manages:
+
+* Cart items
+* Cart subtotal
+* Loading state
+* Errors
+* Fetching cart
+* Adding items
+* Updating quantities
+* Removing items
+* Clearing cart
+
+The flow is:
+
+```text
+Component
+    ↓
+useCart
+    ↓
+cartApi
+    ↓
+apiClient
+    ↓
+Ecommerce API
+```
+
+---
+
+## useLocationOptions
+
+Responsible for checkout location data.
+
+It manages:
+
+* Countries
+* States
+* Cities
+* Loading states
+* Loading states based on selected country
+* Loading cities based on selected state
+
+It uses `useFetch` internally for API request management.
+
+---
+
+# API Layer
+
+API logic is separated from React components.
+
+## productsApi.ts
+
+Responsible for:
+
+* Building product query parameters
+* Calling the product API
+* Handling product responses
+* Mapping API products to the application's `Product` type
+
+## cartApi.ts
+
+Responsible for:
+
+* Getting cart
+* Adding cart items
+* Updating cart quantities
+* Removing cart items
+* Clearing cart
+* Getting cart count
+* Getting cart subtotal
+
+## authApi.ts
+
+Responsible for:
+
+* Login
+* Refresh token
+* Logout
+
+## apiClient.ts
+
+Responsible for:
+
+* Attaching access tokens
+* Handling `401` responses
+* Refreshing expired access tokens
+* Retrying requests
+* Clearing authentication when refresh fails
+
+## countriesApi.ts
+
+Responsible for:
+
+* Countries
+* States
+* Cities
+
+---
+
+# Product API Mapping
+
+API-specific product data is transformed into the reusable application `Product` type.
+
+Example:
+
+```text
+API Product
+     ↓
+productId
+name
+categoryName
+brandName
+price
+rating
+imagePath
+     ↓
+Application Product
+     ↓
+id
+name
+category
+brand
+price
+rating
+imageUrl
+```
+
+This keeps backend/API-specific structures separate from the UI model.
 
 ---
 
@@ -911,7 +1477,20 @@ interface Product {
 }
 ```
 
-API-specific product data is represented separately before being transformed into the application's `Product` type.
+Cart API data is separately typed:
+
+```tsx
+interface CartItemApiResponse {
+  cartItemId: number;
+  productId: number;
+  productName: string;
+  quantity: number;
+  price: number;
+  itemSubtotal: number;
+}
+```
+
+API-specific types remain separate from reusable UI types where appropriate.
 
 ---
 
@@ -926,6 +1505,7 @@ ButtonVariant.Primary;
 ButtonVariant.Secondary;
 ButtonVariant.Outline;
 ButtonVariant.Danger;
+ButtonVariant.Order;
 ```
 
 ## Product Card Variants
@@ -950,6 +1530,275 @@ This keeps commonly used values centralized and reduces repeated string literals
 
 ---
 
+# Project Structure
+
+```text
+src/
+│
+├── api/
+│   ├── apiClient.ts
+│   ├── authApi.ts
+│   ├── cartApi.ts
+│   ├── countriesApi.ts
+│   └── productsApi.ts
+│
+├── components/
+│   │
+│   ├── Cart/
+│   │   ├── Cart.tsx
+│   │   └── CartItem.tsx
+│   │
+│   ├── Category/
+│   │   └── CategoryFilter.tsx
+│   │
+│   ├── Checkout/
+│   │   ├── OrderSummary.tsx
+│   │   ├── ShippingFieldsHookForm.tsx
+│   │   ├── ShippingFormHookForm.tsx
+│   │   └── ShippingMethodHookForm.tsx
+│   │
+│   ├── Common/
+│   │   ├── Button.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── SearchBar.tsx
+│   │   └── Toast.tsx
+│   │
+│   ├── Filters/
+│   │   └── SortFilter.tsx
+│   │
+│   ├── Forms/
+│   │   └── ...
+│   │
+│   ├── PageContents/
+│   │   ├── FeaturedParts.tsx
+│   │   ├── Footer.tsx
+│   │   ├── Header.tsx
+│   │   ├── Hero.tsx
+│   │   ├── PopularCategories.tsx
+│   │   └── QuickLinks.tsx
+│   │
+│   ├── Products/
+│   │   ├── ProductCards.tsx
+│   │   ├── ProductFilters.tsx
+│   │   ├── ProductGrid.tsx
+│   │   ├── ProductListHeader.tsx
+│   │   ├── ProductPagination.tsx
+│   │   └── ProductSkeleton.tsx
+│   │
+│   └── Quantity/
+│       └── QuantitySelector.tsx
+│
+├── enums/
+│   ├── button.ts
+│   ├── product.ts
+│   └── sort.ts
+│
+├── hooks/
+│   ├── useCart.ts
+│   ├── useDebounce.ts
+│   ├── useFetch.ts
+│   ├── useLocationOptions.ts
+│   ├── useProductFilters.ts
+│   ├── useProductList.ts
+│   └── useProducts.ts
+│
+├── pages/
+│   ├── home.tsx
+│   ├── product-list.tsx
+│   ├── Products.tsx
+│   └── showcase.tsx
+│
+├── types/
+│   ├── auth.ts
+│   ├── cart.ts
+│   ├── checkout.ts
+│   └── product.ts
+│
+├── utils/
+│   ├── authStorage.ts
+│   └── buildQueryString.ts
+│
+├── App.tsx
+├── AppContent.tsx
+├── App.css
+├── index.css
+└── main.tsx
+```
+
+---
+
+# Application Flows
+
+## Home Page Search
+
+```text
+Home
+ │
+ └── Hero
+      │
+      └── SearchBar
+            │
+            ▼
+      /product-list?search=iphone
+            │
+            ▼
+       ProductList
+            │
+            ▼
+       useProductList
+            │
+            ▼
+        useProducts
+            │
+            ▼
+        productsApi
+            │
+            ▼
+       Ecommerce API
+```
+
+---
+
+## Home Page Category
+
+```text
+Home
+ │
+ └── PopularCategories
+        │
+        ▼
+/product-list?categoryId=1
+        │
+        ▼
+   ProductList
+        │
+        ▼
+  useProductList
+        │
+        ▼
+   CategoryId=1
+        │
+        ▼
+ Ecommerce API
+```
+
+---
+
+## Product Listing
+
+```text
+ProductList
+     │
+     ▼
+useProductList
+     │
+     ├───────────────┐
+     │               │
+     ▼               ▼
+useProducts    useProductFilters
+     │               │
+     ▼               ▼
+productsApi     Filter + Sort State
+     │               │
+     └───────┬───────┘
+             ▼
+         API Query
+             │
+             ▼
+       Ecommerce API
+             │
+             ▼
+        API Response
+             │
+        ┌────┼────┐
+        ▼    ▼    ▼
+     Loading Error Products
+        │    │      │
+        ▼    ▼      ▼
+    Skeleton Retry ProductGrid
+                       │
+                       ▼
+                  ProductCard
+```
+
+---
+
+## Add to Cart
+
+```text
+ProductCard
+     ↓
+handleAddToCart
+     ↓
+useCart.addToCart
+     ↓
+cartApi.addCartItem
+     ↓
+apiClient
+     ↓
+POST /api/v1/cart/items
+     ↓
+Ecommerce API
+     ↓
+Refresh Cart
+     ↓
+Toast Message
+```
+
+---
+
+## Authentication
+
+```text
+Login
+  ↓
+authApi
+  ↓
+Access Token + Refresh Token
+  ↓
+authStorage
+  ↓
+apiClient
+  ↓
+Authenticated API Request
+```
+
+If the access token expires:
+
+```text
+API Request
+     ↓
+401 Unauthorized
+     ↓
+Refresh Token
+     ↓
+New Access Token
+     ↓
+Retry Original Request
+```
+
+---
+
+## Checkout Location
+
+```text
+Checkout Form
+      ↓
+Select Country
+      ↓
+useLocationOptions
+      ↓
+CountriesNow API
+      ↓
+States
+      ↓
+Select State
+      ↓
+Cities
+```
+
+---
+
 # Pages
 
 ## Home
@@ -963,6 +1812,8 @@ The main ecommerce homepage contains:
 * Featured products carousel
 * Popular categories
 * Footer
+* Dynamic API products
+* Add to cart
 
 ---
 
@@ -998,6 +1849,50 @@ Features include:
 * Empty state
 * Responsive filters
 * Refresh functionality
+* AbortController
+
+---
+
+## Cart
+
+Provides the shopping cart experience.
+
+Features include:
+
+* Cart items
+* Quantity management
+* Remove item
+* Clear cart
+* Item subtotal
+* Cart subtotal
+* Total item count
+* Empty state
+* Loading state
+* Error handling
+* Proceed to checkout
+
+---
+
+## Checkout Controlled
+
+Demonstrates a controlled React checkout form.
+
+---
+
+## Checkout Hook Form
+
+Demonstrates form management using React Hook Form.
+
+It includes:
+
+* Form validation
+* Shipping information
+* Country selection
+* State selection
+* City selection
+* Shipping method
+* Order summary
+* Form submission
 
 ---
 
@@ -1007,206 +1902,49 @@ Demonstrates reusable UI components and their available variants.
 
 ---
 
-# Project Structure
+# Separation of Concerns
+
+The project follows a separation-of-concerns approach.
 
 ```text
-src/
-│
-├── api/
-│   └── productsApi.ts
-│
-├── components/
-│   │
-│   ├── Common/
-│   │   ├── Button.tsx
-│   │   └── SearchBar.tsx
-│   │
-│   ├── Category/
-│   │   └── CategoryFilter.tsx
-│   │
-│   ├── Common/
-│   │   ├── EmptyState.tsx
-│   │   └── Button.tsx
-│   │
-│   ├── Filters/
-│   │   └── SortFilter.tsx
-│   │
-│   ├── PageContents/
-│   │   ├── FeaturedParts.tsx
-│   │   ├── Footer.tsx
-│   │   ├── Header.tsx
-│   │   ├── Hero.tsx
-│   │   ├── PopularCategories.tsx
-│   │   └── QuickLinks.tsx
-│   │
-│   ├── Products/
-│   │   ├── ProductCards.tsx
-│   │   ├── ProductFilters.tsx
-│   │   ├── ProductGrid.tsx
-│   │   ├── ProductListHeader.tsx
-│   │   ├── ProductPagination.tsx
-│   │   └── ProductSkeleton.tsx
-│   │
-│   └── Quantity/
-│       └── QuantitySelector.tsx
-│
-├── enums/
-│   ├── button.ts
-│   ├── product.ts
-│   └── sort.ts
-│
-├── hooks/
-│   ├── useDebounce.ts
-│   ├── useProductFilters.ts
-│   ├── useProductList.ts
-│   └── useProducts.ts
-│
-├── pages/
-│   ├── home.tsx
-│   ├── product-list.tsx
-│   ├── Products.tsx
-│   └── showcase.tsx
-│
-├── types/
-│   └── product.ts
-│
-├── App.tsx
-├── App.css
-├── index.css
-└── main.tsx
+Components
+   ↓
+UI / Rendering
+
+Hooks
+   ↓
+React State + Business Logic
+
+API
+   ↓
+HTTP Communication
+
+Types
+   ↓
+Type Definitions
+
+Enums
+   ↓
+Reusable Constants
+
+Utils
+   ↓
+Shared Utility Logic
 ```
 
----
+This makes the application easier to:
 
-# Application Flow
-
-## Home Page Search
-
-```text
-Home
- │
- └── Hero
-      │
-      └── SearchBar
-            │
-            ▼
-      /product-list?search=iphone
-            │
-            ▼
-       ProductList
-            │
-            ▼
-       useProductList
-            │
-            ▼
-        productsApi
-            │
-            ▼
-       Ecommerce API
-```
-
----
-
-## Home Page Category
-
-```text
-Home
- │
- └── PopularCategories
-        │
-        ▼
-/product-list?categoryId=1
-        │
-        ▼
-   ProductList
-        │
-        ▼
- useProductList
-        │
-        ▼
-   CategoryId=1
-        │
-        ▼
- Ecommerce API
-```
-
----
-
-## Product Listing
-
-```text
-ProductList
-     │
-     ▼
-useProductList
-     │
-     ├───────────────┐
-     │               │
-     ▼               ▼
-useProducts    useProductFilters
-     │               │
-     ▼               ▼
-productsApi     Filter + Sort State
-     │               │
-     └───────┬───────┘
-             ▼
-        API Query
-             │
-             ▼
-      Ecommerce API
-             │
-             ▼
-      API Response
-             │
-       ┌─────┼─────┐
-       ▼     ▼     ▼
-    Loading Error Products
-       │     │      │
-       ▼     ▼      ▼
-   Skeleton Retry ProductGrid
-                     │
-                     ▼
-                ProductCard
-```
-
-## Home Page
-
-* Dynamic featured products
-* Featured product carousel
-* Category navigation
-* Hero search
-* Reusable search component
-* Loading skeletons
-* Responsive layout
-* Reusable components
-
-## Product Listing
-
-* Dynamic API products
-* Search
-* Category filtering
-* Brand filtering
-* Price filtering
-* Rating filtering
-* Sorting
-* API-based pagination
-* Product count
-* Breadcrumb navigation
-* Loading skeletons
-* Empty state
-* API error handling
-* Retry functionality
-* Refresh functionality
-* Responsive desktop filters
-* Responsive mobile filters
-* Responsive product grid
-* Reusable and maintainable component architecture
+* Maintain
+* Test
+* Extend
+* Debug
+* Reuse
 
 ---
 
 # Summary
 
-The application demonstrates the use of React and TypeScript concepts learned during Week 1–2, including:
+The application demonstrates React and TypeScript concepts including:
 
 * React components
 * Props
@@ -1221,10 +1959,21 @@ The application demonstrates the use of React and TypeScript concepts learned du
 * Filtering
 * Sorting
 * Pagination
-* Conditional rendering
+* Authentication
+* Access tokens
+* Refresh tokens
+* Automatic token refresh
+* Cart management
+* Checkout forms
+* React Hook Form
+* Form validation
+* Dependent dropdowns
+* AbortController
+* Request cancellation
 * Loading states
 * Error handling
 * Empty states
+* Toast notifications
 * TypeScript interfaces
 * Enum-style constants
 * Reusable components
@@ -1232,4 +1981,21 @@ The application demonstrates the use of React and TypeScript concepts learned du
 * Responsive design
 * Separation of concerns
 
+
+
+### A few important corrections I made from your old README
+
+- Added **Cart**, which wasn't documented before.
+- Added **authentication + access/refresh token flow**.
+- Added **automatic token refresh and retry**.
+- Added **`apiClient.ts`** architecture.
+- Added **`useFetch` + AbortController**.
+- Added **`useCart`**.
+- Added **`useLocationOptions`** and dependent Country → State → City loading.
+- Added **React Hook Form checkout** details.
+- Added **Toast notifications**.
+- Added **cart error handling**, including preserving backend messages such as stock validation.
+- Added **silent cart refresh**, which prevents the cart skeleton from flashing after add/update/remove.
+- Updated the project structure to include the newer `api`, `hooks`, `types`, `Cart`, `Checkout`, and utility files.
+- Removed claims that don't match the current `ProductCard` behavior, such as saying the default card necessarily has a `QuantitySelector`; your default/featured card now uses the direct quantity input.
 

@@ -1,93 +1,92 @@
-import { useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { fetchCities, fetchCountries, fetchStates } from "../api/countriesApi";
+import useFetch from "./useFetch";
+
+interface Country {
+  country: string;
+}
+
+interface State {
+  name: string;
+}
 
 function useLocationOptions() {
-  const [countries, setCountries] = useState<string[]>([]);
-  const [states, setStates] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
+  const emptyStatesRequest = useCallback(async () => [], []);
 
-  const [loadingCountries, setLoadingCountries] = useState(false);
-  const [loadingStates, setLoadingStates] = useState(false);
-  const [loadingCities, setLoadingCities] = useState(false);
+  const emptyCitiesRequest = useCallback(async () => [], []);
 
-  useEffect(() => {
-    const loadCountries = async () => {
-      setLoadingCountries(true);
+  const { data: countriesData, loading: loadingCountries } =
+    useFetch<Country[]>(fetchCountries);
 
-      try {
-        const data = await fetchCountries();
+  const {
+    data: statesData,
+    loading: loadingStates,
+    execute: executeStates,
+    setData: setStates,
+  } = useFetch<State[]>(emptyStatesRequest, {
+    immediate: false,
+  });
 
-        setCountries(
-          data.map((country: { country: string }) => country.country),
-        );
-      } catch {
-        setCountries([]);
-      } finally {
-        setLoadingCountries(false);
+  const {
+    data: citiesData,
+    loading: loadingCities,
+    execute: executeCities,
+    setData: setCities,
+  } = useFetch<string[]>(emptyCitiesRequest, {
+    immediate: false,
+  });
+
+  const loadStates = useCallback(
+    async (country: string) => {
+      if (!country) {
+        setStates([]);
+        setCities([]);
+        return;
       }
-    };
 
-    loadCountries();
-  }, []);
+      await executeStates((signal) => fetchStates(country, signal));
 
-  const loadStates = async (country: string) => {
-    setStates([]);
-    setCities([]);
-
-    if (!country) {
-      return;
-    }
-
-    setLoadingStates(true);
-
-    try {
-      const data = await fetchStates(country);
-
-      setStates(
-        data.map((state: string | { name: string }) =>
-          typeof state === "string" ? state : state.name,
-        ),
-      );
-    } catch {
-      setStates([]);
-    } finally {
-      setLoadingStates(false);
-    }
-  };
-
-  const loadCities = async (country: string, state: string) => {
-    setCities([]);
-
-    if (!country || !state) {
-      return;
-    }
-
-    setLoadingCities(true);
-
-    try {
-      const data = await fetchCities(country, state);
-
-      setCities(
-        data.map((city: string | { name: string }) =>
-          typeof city === "string" ? city : city.name,
-        ),
-      );
-    } catch {
       setCities([]);
-    } finally {
-      setLoadingCities(false);
-    }
-  };
+    },
+    [executeStates, setStates, setCities],
+  );
+
+  const loadCities = useCallback(
+    async (country: string, state: string) => {
+      if (!country || !state) {
+        setCities([]);
+        return;
+      }
+
+      await executeCities((signal) => fetchCities(country, state, signal));
+    },
+    [executeCities, setCities],
+  );
+
+  const countries = useMemo(
+    () => countriesData?.map((country) => country.country) ?? [],
+    [countriesData],
+  );
+
+  const states = useMemo(
+    () => statesData?.map((state) => state.name) ?? [],
+    [statesData],
+  );
+
+  const cities = useMemo(() => citiesData ?? [], [citiesData]);
 
   return {
     countries,
     states,
     cities,
+
     loadingCountries,
     loadingStates,
     loadingCities,
+
     loadStates,
     loadCities,
+
     setStates,
     setCities,
   };

@@ -40,25 +40,29 @@ function Footer() {
               <h3 className="mb-4 text-sm font-bold">QUICK LINKS</h3>
 
               <div className="flex flex-col gap-2 text-sm text-orange-600">
-                <span>How to Buy</span>
-                <span>Find a Service Location</span>
-                <span>Company Store</span>
-                <span>About Us</span>
-                <span>Products</span>
-                <span>Careers</span>
+                <span className="cursor-pointer">How to Buy</span>
+                <span className="cursor-pointer">Find a Service Location</span>
+                <span className="cursor-pointer">Company Store</span>
+                <span className="cursor-pointer">About Us</span>
+                <span className="cursor-pointer">Products</span>
+                <span className="cursor-pointer">Careers</span>
               </div>
             </div>
 
             <div>
               <h3 className="mb-4 text-sm font-bold">PRESS RELEASES</h3>
 
-              <span className="text-sm text-orange-600">Press Releases</span>
+              <span className="cursor-pointer text-sm text-orange-600">
+                Press Releases
+              </span>
             </div>
 
             <div>
               <h3 className="mb-4 text-sm font-bold">RESOURCES</h3>
 
-              <span className="text-sm text-orange-600">Our Resources</span>
+              <span className="cursor-pointer text-sm text-orange-600">
+                Our Resources
+              </span>
             </div>
 
             <div>
