@@ -1,5 +1,5 @@
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
-import type { CheckoutFormData } from "../types/checkout";
+import type { CheckoutFormData } from "../../../types/checkout";
 
 interface ShippingMethodHookFormProps {
   register: UseFormRegister<CheckoutFormData>;
