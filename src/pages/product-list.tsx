@@ -74,12 +74,10 @@ function ProductList({ searchTerm, onAddToCart }: ProductListProps) {
         {/* Main Layout */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[260px_minmax(0,1fr)]">
           {/* Desktop Filters */}
-          <aside className="hidden md:block">
-            <div className="sticky top-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+          <aside className="hidden md:sticky md:top-5 md:block md:self-start">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
               <div className="mb-5 border-b border-gray-100 pb-4">
-                <h2 className="text-base font-bold text-gray-900">
-                  Filters
-                </h2>
+                <h2 className="text-base font-bold text-gray-900">Filters</h2>
 
                 <p className="mt-1 text-[11px] text-gray-400">
                   Refine your results
@@ -115,9 +113,7 @@ function ProductList({ searchTerm, onAddToCart }: ProductListProps) {
             <div className="rounded-2xl border border-gray-200 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
               <div className="flex items-center justify-between px-5 py-4">
                 <div>
-                  <h2 className="text-base font-bold text-gray-900">
-                    Filters
-                  </h2>
+                  <h2 className="text-base font-bold text-gray-900">Filters</h2>
 
                   <p className="mt-1 text-[11px] text-gray-400">
                     Refine your results
@@ -153,9 +149,7 @@ function ProductList({ searchTerm, onAddToCart }: ProductListProps) {
                       onCategoryChange={(categoryId) =>
                         toggleCategory(categoryId, true)
                       }
-                      onBrandChange={(brandId) =>
-                        toggleBrand(brandId, true)
-                      }
+                      onBrandChange={(brandId) => toggleBrand(brandId, true)}
                       onPriceRangeChange={setDraftPriceRange}
                       onRatingChange={setDraftRating}
                       onSortByChange={setSortBy}

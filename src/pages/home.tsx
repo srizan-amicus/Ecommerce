@@ -2,7 +2,7 @@ import Hero from "../components/PageContents/Hero";
 import QuickLinks from "../components/PageContents/QuickLinks";
 import FeaturedParts from "../components/PageContents/FeaturedParts";
 import PopularCategories from "../components/PageContents/PopularCategories";
-import Footer from "../components/PageContents/Footer";
+
 import type { AddToCartResult } from "../types/cart";
 
 interface HomeProps {
@@ -19,7 +19,6 @@ function Home({ onAddToCart }: HomeProps) {
       <QuickLinks />
       <FeaturedParts onAddToCart={onAddToCart} />
       <PopularCategories />
-      <Footer />
     </div>
   );
 }

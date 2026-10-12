@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
 import type { Product } from "../../types/product";
 import QuantitySelector from "../Quantity/QuantitySelector";
 import Button from "../Common/Button";
@@ -36,22 +38,24 @@ function ProductCard({
   const isNew = product.isNew === true;
 
   const handleAddToCart = async () => {
-    if (!onAddToCart || isAdding) return;
+    if (!onAddToCart || isAdding || quantity < 1) return;
 
     setIsAdding(true);
     setIsAdded(false);
 
-    const result = await onAddToCart(product.id, quantity);
+    try {
+      const result = await onAddToCart(product.id, quantity);
 
-    if (result.success) {
-      setIsAdded(true);
+      if (result.success) {
+        setIsAdded(true);
 
-      window.setTimeout(() => {
-        setIsAdded(false);
-      }, 1500);
+        window.setTimeout(() => {
+          setIsAdded(false);
+        }, 1500);
+      }
+    } finally {
+      setIsAdding(false);
     }
-
-    setIsAdding(false);
   };
 
   return (
@@ -62,7 +66,7 @@ function ProductCard({
           : "product-card"
       }
     >
-      {/* Product Image */}
+      {/* Product Image: clicking opens the product detail page */}
       <div
         className={
           isListing
@@ -71,32 +75,42 @@ function ProductCard({
         }
       >
         {isSale && (
-          <span className="absolute left-2 top-2 rounded bg-red-500 px-2 py-1 text-[10px] font-bold text-white">
+          <span className="absolute left-2 top-2 z-10 rounded bg-red-500 px-2 py-1 text-[10px] font-bold text-white">
             SALE
           </span>
         )}
 
         {isNew && (
-          <span className="absolute right-2 top-2 rounded bg-green-500 px-2 py-1 text-[10px] font-bold text-white">
+          <span className="absolute right-2 top-2 z-10 rounded bg-green-500 px-2 py-1 text-[10px] font-bold text-white">
             NEW
           </span>
         )}
 
-        <img
-          src={
-            product.imageUrl ||
-            "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600"
-          }
-          alt={product.name}
+        <Link
+          to={`/product/${product.id}`}
+          aria-label={`View ${product.name} details`}
           className={
-            isListing ? "h-full w-full object-contain" : "product-image"
+            isListing
+              ? "flex h-full w-full items-center justify-center"
+              : "flex h-full w-full items-center justify-center"
           }
-        />
+        >
+          <img
+            src={
+              product.imageUrl ||
+              "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600"
+            }
+            alt={product.name}
+            className={
+              isListing ? "h-full w-full object-contain" : "product-image"
+            }
+          />
+        </Link>
       </div>
 
       {/* Product Information */}
       <div className={isListing ? "flex flex-1 flex-col p-2" : "product-info"}>
-        {/* Product Name */}
+        {/* Product Name: clicking opens the product detail page */}
         <h2
           className={
             isListing
@@ -104,7 +118,12 @@ function ProductCard({
               : "product-name"
           }
         >
-          {product.name}
+          <Link
+            to={`/product/${product.id}`}
+            className="transition-colors hover:text-orange-600"
+          >
+            {product.name}
+          </Link>
         </h2>
 
         {isListing ? (
@@ -117,8 +136,12 @@ function ProductCard({
             {/* Star Rating */}
             <div className="flex items-center justify-center gap-1">
               <span className="text-sm tracking-wide text-yellow-500">
-                {"★".repeat(Math.round(product.rating ?? 0))}
-                {"☆".repeat(5 - Math.round(product.rating ?? 0))}
+                {"★".repeat(
+                  Math.min(5, Math.max(0, Math.round(product.rating ?? 0))),
+                )}
+                {"☆".repeat(
+                  5 - Math.min(5, Math.max(0, Math.round(product.rating ?? 0))),
+                )}
               </span>
 
               <span className="text-xs font-semibold text-gray-600">
@@ -141,14 +164,14 @@ function ProductCard({
               variant={ButtonVariant.Primary}
               className="!mt-2 !h-10 !w-full !min-w-0 px-2 text-sm"
               onClick={handleAddToCart}
-              disabled={isAdding}
+              disabled={isAdding || quantity < 1}
             >
               {isAdding ? "Adding..." : isAdded ? "✓ Added" : "Add To Cart"}
             </Button>
           </>
         ) : (
           <>
-            {/* Assignment 2 */}
+            {/* Default card details */}
 
             <p className="product-sku">
               #{product.id.toString().padStart(8, "0")}
@@ -156,7 +179,6 @@ function ProductCard({
 
             <div className="product-rating">
               <span className="stars">★★★★★</span>
-
               <span className="rating-value">{product.rating ?? 0} (1)</span>
             </div>
 
@@ -165,8 +187,9 @@ function ProductCard({
 
               <input
                 type="number"
-                value={quantity}
+                value={quantity === 0 ? "" : quantity}
                 min="1"
+                step="1"
                 onChange={(event) => {
                   const value = event.target.value;
 
@@ -177,7 +200,9 @@ function ProductCard({
 
                   const numericValue = Number(value);
 
-                  setQuantity(numericValue);
+                  if (Number.isInteger(numericValue) && numericValue >= 0) {
+                    setQuantity(numericValue);
+                  }
                 }}
                 onFocus={(event) => {
                   if (quantity === 0) {
@@ -185,18 +210,23 @@ function ProductCard({
                   }
                 }}
                 onBlur={() => {
-                  if (quantity < 1 || Number.isNaN(quantity)) {
+                  if (
+                    quantity < 1 ||
+                    !Number.isInteger(quantity) ||
+                    Number.isNaN(quantity)
+                  ) {
                     setQuantity(1);
                   }
                 }}
               />
             </div>
+
             {/* Add to Cart */}
             <Button
               variant={ButtonVariant.Primary}
               className="!mt-2 !h-10 !w-full !min-w-0 px-2 text-sm"
               onClick={handleAddToCart}
-              disabled={isAdding}
+              disabled={isAdding || quantity < 1}
             >
               {isAdding ? "Adding..." : isAdded ? "✓ Added" : "Add To Cart"}
             </Button>

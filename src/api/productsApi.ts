@@ -91,3 +91,35 @@ export async function fetchProductsFromApi(
     totalPages: data.totalPages,
   };
 }
+
+export async function fetchProductById(
+  id: number,
+  signal?: AbortSignal,
+): Promise<Product> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/Products/${id}`, {
+    signal,
+  });
+
+  if (response.status === 404) {
+    throw new Error("Product not found.");
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch product details.");
+  }
+
+  const product: ProductApiResponse = await response.json();
+
+  return {
+    id: product.productId,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    imageUrl: product.imagePath ? `${API_BASE_URL}/${product.imagePath}` : "",
+    category: product.categoryName,
+    categoryId: product.categoryId,
+    brand: product.brandName,
+    brandId: product.brandId,
+    rating: product.rating,
+  };
+}

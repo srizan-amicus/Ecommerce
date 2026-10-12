@@ -1,31 +1,25 @@
-import CartItem from "./CartItem";
-import type { CartItemApiResponse } from "../../api/cartApi";
-import OrderSummary from "../Checkout/OrderSummary";
 import { useNavigate } from "react-router-dom";
 
-interface CartProps {
-  cartItems: CartItemApiResponse[];
-  subtotal: number;
-  isLoading: boolean;
-  error: string | null;
-  onQuantityChange: (productId: number, quantity: number) => void;
-  onRemove: (productId: number) => void;
-  onClearCart: () => void;
-}
+import CartItem from "./CartItem";
+import OrderSummary from "../Checkout/OrderSummary";
+import useCart from "../../hooks/useCart";
 
-function Cart({
-  cartItems,
-  subtotal,
-  isLoading,
-  error,
-  onQuantityChange,
-  onRemove,
-  onClearCart,
-}: CartProps) {
-  //total dynamic number
-  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+function Cart() {
+  const {
+    cartItems,
+    subtotal,
+    isLoading,
+    error,
+    updateQuantity,
+    removeFromCart,
+    emptyCart,
+  } = useCart();
 
   const navigate = useNavigate();
+
+  // Total number of individual items in the cart
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   // Initial cart loading state
   if (isLoading) {
     return (
@@ -47,8 +41,7 @@ function Cart({
     );
   }
 
-  // Only show the full-page error when the cart itself
-  // could not be loaded.
+  // Show a full-page error if the cart could not load
   if (error && cartItems.length === 0) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -75,6 +68,14 @@ function Cart({
           <p className="mt-2 text-gray-500">
             Add some products to your cart to get started.
           </p>
+
+          <button
+            type="button"
+            onClick={() => navigate("/products")}
+            className="mt-5 rounded-lg bg-orange-500 px-5 py-3 font-semibold text-white transition hover:bg-orange-600"
+          >
+            Continue Shopping
+          </button>
         </div>
       </main>
     );
@@ -96,7 +97,7 @@ function Cart({
 
           <button
             type="button"
-            onClick={onClearCart}
+            onClick={() => void emptyCart()}
             className="text-sm text-red-500 hover:text-red-700"
           >
             Clear Cart
@@ -121,8 +122,8 @@ function Cart({
               <CartItem
                 key={item.cartItemId}
                 item={item}
-                onQuantityChange={onQuantityChange}
-                onRemove={onRemove}
+                onQuantityChange={updateQuantity}
+                onRemove={removeFromCart}
               />
             ))}
           </section>
@@ -133,7 +134,7 @@ function Cart({
             subtotal={subtotal}
             actionLabel="PROCEED TO CHECKOUT"
             actionType="button"
-            onAction={() => navigate("/checkout-hook-form")}
+            onAction={() => navigate("/checkout")}
             showContinueShopping
           />
         </div>

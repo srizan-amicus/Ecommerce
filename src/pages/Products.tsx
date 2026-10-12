@@ -65,9 +65,7 @@ function Products() {
   return (
     <div className="products-section">
       <div className="mt-8 flex h-12 items-center justify-between">
-        <h1 className="!m-0 !p-0 text-2xl leading-none">
-          Featured Products
-        </h1>
+        <h1 className="!m-0 !p-0 text-2xl leading-none">Featured Products</h1>
 
         <Button
           variant="primary"

@@ -24,7 +24,7 @@ function useProducts(params: ProductQueryParams = defaultParams) {
     totalPages: data?.totalPages ?? 0,
     loading,
     error,
-    fetchProducts: execute,
+    fetchProducts: useCallback(() => execute(), [execute]),
   };
 }
 

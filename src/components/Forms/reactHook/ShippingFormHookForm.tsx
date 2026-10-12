@@ -4,12 +4,16 @@ import type { CheckoutFormData } from "../../../types/checkout";
 import useLocationOptions from "../../../hooks/useLocationOptions";
 import ShippingFieldsHookForm from "./ShippingFieldsHookForm";
 import ShippingMethodHookForm from "./ShippingMethodHookForm";
+import {useNavigate} from "react-router-dom";
 
 type ShippingFormHookFormProps = {
   children?: React.ReactNode;
 };
 
 function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
+
+const navigate = useNavigate();
+
   const methods = useForm<CheckoutFormData>({
     mode: "onChange",
 
@@ -103,27 +107,29 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
     );
   };
 
-  const onSubmit = (data: CheckoutFormData) => {
-    console.log("Order submitted:", data);
+ const onSubmit = (data: CheckoutFormData) => {
+  console.log("Order submitted:", data);
 
-    setSuccessMessage("Order placed successfully!");
+  setSuccessMessage("Order placed successfully!");
 
-    reset({
-      fullName: "",
-      email: "",
-      phone: "",
-      streetAddress: "",
-      apartment: "",
-      city: "",
-      state: "",
-      zip: "",
-      country: "",
-      shippingMethod: "",
-    });
+  reset({
+    fullName: "",
+    email: "",
+    phone: "",
+    streetAddress: "",
+    apartment: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "",
+    shippingMethod: "",
+  });
 
-    setStates([]);
-    setCities([]);
-  };
+  setStates([]);
+  setCities([]);
+
+  navigate("/orders");
+};
 
   return (
     <FormProvider {...methods}>

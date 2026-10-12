@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Button from "../Common/Button";
 import { ButtonVariant } from "../../enums/button";
 
@@ -18,25 +17,7 @@ function ProductListHeader({
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        {/* Breadcrumb */}
-        <div className="mb-2 flex items-center gap-2 text-xs text-gray-400">
-          <Link
-            to="/"
-            className="transition hover:text-orange-500"
-          >
-            Home
-          </Link>
-
-          <span>/</span>
-
-          <span className="font-medium text-gray-600">
-            Product Listing
-          </span>
-        </div>
-
-        <h1 className="text-2xl font-bold text-gray-900">
-          Product Listing
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900">Product Listing</h1>
 
         <p className="mt-1 text-xs text-gray-500">
           Browse and find products you like
