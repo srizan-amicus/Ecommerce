@@ -1,3 +1,5 @@
+import { Search } from "lucide-react";
+
 import Button from "../Common/Button";
 import { ButtonVariant } from "../../enums/button";
 
@@ -36,10 +38,10 @@ function SearchBar({
         type="button"
         variant={ButtonVariant.Compact}
         onClick={onSearch}
-        className="absolute right-0 top-0 !h-10 !min-h-10 !w-11 !min-w-0 !rounded-none !px-0 !py-0 text-xl text-orange-500 hover:bg-orange-50"
+        className="absolute right-0 top-0 !h-10 !min-h-10 !w-11 !min-w-0 !rounded-none !px-0 !py-0 text-orange-500 hover:bg-orange-50"
         aria-label="Search"
       >
-        🔍
+        <Search size={20} strokeWidth={2} aria-hidden="true" />
       </Button>
     </div>
   );
