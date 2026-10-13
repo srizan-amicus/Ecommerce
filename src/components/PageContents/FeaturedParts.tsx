@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
-import ProductCard from "../Products/productCards";
+import ProductCard from "../Products/ProductCards";
 import useProducts from "../../hooks/useProducts";
 import "swiper/css";
 import type { AddToCartResult } from "../../types/cart";

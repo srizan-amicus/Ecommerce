@@ -4,10 +4,11 @@ import ProductListHeader from "../components/Products/ProductListHeader";
 import ProductGrid from "../components/Products/ProductGrid";
 import ProductPagination from "../components/Products/ProductPagination";
 import useProductList from "../hooks/useProductList";
+import type { AddToCartResult } from "../types/cart";
 
 interface ProductListProps {
   searchTerm: string;
-  onAddToCart: (productId: number, quantity: number) => void;
+  onAddToCart: (productId: number, quantity: number) => Promise<AddToCartResult>;
 }
 
 function ProductList({ searchTerm, onAddToCart }: ProductListProps) {

@@ -1,9 +1,10 @@
 import Button from "../Common/Button";
-import ProductCard from "./productCards";
-import ProductSkeleton from "./productSkeleton";
+import ProductCard from "./ProductCards";
+import ProductSkeleton from "./ProductSkeleton";
 import EmptyState from "../Common/EmptyState";
 import { ButtonVariant } from "../../enums/button";
 import { ProductCardVariant } from "../../enums/product";
+import type { AddToCartResult } from "../../types/cart";
 import type { Product } from "../../types/product";
 
 interface ProductGridProps {
@@ -11,7 +12,7 @@ interface ProductGridProps {
   loading: boolean;
   error: string | null;
   onRetry: () => void;
-  onAddToCart: (productId: number, quantity: number) => void;
+  onAddToCart: (productId: number, quantity: number) => Promise<AddToCartResult>;
 }
 
 function ProductGrid({ products, loading, error, onRetry, onAddToCart }: ProductGridProps) {
