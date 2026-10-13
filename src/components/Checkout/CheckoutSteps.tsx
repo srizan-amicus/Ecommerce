@@ -1,22 +1,42 @@
-function CheckoutSteps() {
+interface CheckoutStepsProps {
+  activeStep: 1 | 2 | 3;
+}
+
+const steps = ["Shipping", "Payment", "Review"] as const;
+
+function CheckoutSteps({ activeStep }: CheckoutStepsProps) {
   return (
-    <div className="mb-6 flex items-center justify-center gap-2">
-      <div className="flex h-7 w-48 items-center rounded-full bg-orange-500 px-4 text-xs font-bold text-white">
-        1. Shipping
-      </div>
+    <nav
+      aria-label="Checkout progress"
+      className="mb-6 flex items-center justify-center gap-2"
+    >
+      {steps.map((step, index) => {
+        const stepNumber = (index + 1) as 1 | 2 | 3;
+        const isActive = stepNumber === activeStep;
+        const isComplete = stepNumber < activeStep;
 
-      <div className="h-px w-12 bg-gray-300" />
+        return (
+          <div key={step} className="flex min-w-0 flex-1 items-center gap-2">
+            <div
+              aria-current={isActive ? "step" : undefined}
+              className={`flex h-9 min-w-0 flex-1 items-center justify-center rounded-full px-2 text-xs font-bold sm:px-4 ${
+                isActive
+                  ? "bg-orange-500 text-white"
+                  : isComplete
+                    ? "bg-orange-100 text-orange-800"
+                    : "bg-gray-300 text-gray-800"
+              }`}
+            >
+              {stepNumber}. {step}
+            </div>
 
-      <div className="flex h-7 w-48 items-center rounded-full bg-gray-300 px-4 text-xs font-bold text-gray-800">
-        2. Payment
-      </div>
-
-      <div className="h-px w-12 bg-gray-300" />
-
-      <div className="flex h-7 w-48 items-center rounded-full bg-gray-300 px-4 text-xs font-bold text-gray-800">
-        3. Review
-      </div>
-    </div>
+            {index < steps.length - 1 && (
+              <div className="h-px w-3 shrink-0 bg-gray-300 sm:w-8" />
+            )}
+          </div>
+        );
+      })}
+    </nav>
   );
 }
 

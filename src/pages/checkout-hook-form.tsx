@@ -12,17 +12,16 @@ function CheckoutHookForm({ cartItems, subtotal }: CheckoutHookFormProps) {
   return (
     <div className="min-h-screen bg-white text-gray-800">
       <main className="mx-auto max-w-[1280px] px-6 py-4">
-        {/* Page Title */}
         <h1 className="mb-6 text-xl font-bold text-gray-900">Checkout</h1>
 
-        {/* Checkout Steps */}
-        <CheckoutSteps />
+        <CheckoutSteps activeStep={1} />
 
         <ShippingFormHookForm>
           <OrderSummary
             cartItems={cartItems}
             subtotal={subtotal}
-            actionLabel="PLACE ORDER"
+            hideTotals
+            actionLabel="PROCEED TO PAYMENT"
             actionType="submit"
           />
         </ShippingFormHookForm>

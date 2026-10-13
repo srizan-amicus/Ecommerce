@@ -304,3 +304,32 @@ input[type="number"] {
     transform: translateX(100%);
   }
 }
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[toast-in_300ms_ease-out\],
+  .animate-\[toast-progress_3s_linear_forwards\] {
+    animation: none;
+  }
+}

@@ -24,6 +24,8 @@ import type { AddToCartResult } from "../types/cart";
 const CheckoutControlled = lazy(() => import("../pages/checkout-controlled"));
 const CheckoutHookForm = lazy(() => import("../pages/checkout-hook-form"));
 const Orders = lazy(() => import("../pages/orders"));
+const CheckoutPayment = lazy(() => import("../pages/checkout-payment"));
+const CheckoutReview = lazy(() => import("../pages/checkout-review"));
 
 function SharedLayout() {
   return (
@@ -143,6 +145,10 @@ function AppContent() {
                 path="/checkout-hook-form"
                 element={<Navigate to="/checkout" replace />}
               />
+              <Route path="/checkout/payment" element={<CheckoutPayment />} />
+
+              <Route path="/checkout/review" element={<CheckoutReview />} />
+              <Route path="/checkout/payment" element={<CheckoutPayment />} />
 
               <Route
                 path="/checkout-controlled"

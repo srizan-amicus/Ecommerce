@@ -9,4 +9,5 @@ export interface CheckoutFormData {
   zip: string;
   country: string;
   shippingMethod: string;
+  paymentMethod: string;
 }
