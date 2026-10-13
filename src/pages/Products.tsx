@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import ProductCard from "../components/Products/ProductCards";
+import ProductCard from "../components/Products/productCards";
 import type { Product } from "../types/product";
 import { fetchProductsFromApi } from "../api/productsApi";
-import ProductSkeleton from "../components/Products/ProductSkeleton";
+import ProductSkeleton from "../components/Products/productSkeleton";
 import Button from "../components/Common/Button";
 
 function Products() {

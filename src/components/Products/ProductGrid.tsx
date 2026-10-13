@@ -1,6 +1,6 @@
 import Button from "../Common/Button";
-import ProductCard from "./ProductCards";
-import ProductSkeleton from "./ProductSkeleton";
+import ProductCard from "./productCards";
+import ProductSkeleton from "./productSkeleton";
 import EmptyState from "../Common/EmptyState";
 import { ButtonVariant } from "../../enums/button";
 import { ProductCardVariant } from "../../enums/product";

@@ -1,5 +1,5 @@
 import type { CartItemApiResponse } from "../../api/cartApi";
-import QuantitySelector from "../Quantity/QuantitySelector";
+import QuantitySelector from "../Quantity/quantitySelector";
 
 interface CartItemProps {
   item: CartItemApiResponse;

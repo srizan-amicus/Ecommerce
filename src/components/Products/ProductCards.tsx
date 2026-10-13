@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { Product } from "../../types/product";
-import QuantitySelector from "../Quantity/QuantitySelector";
+import QuantitySelector from "../Quantity/quantitySelector";
 import Button from "../Common/Button";
 import { ButtonVariant } from "../../enums/button";
 import { ProductCardVariant } from "../../enums/product";
