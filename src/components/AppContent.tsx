@@ -14,7 +14,7 @@ import Footer from "./PageContents/Footer";
 import Cart from "./Cart/Cart";
 import Toast from "./Common/Toast";
 import Breadcrumbs from "./Common/Breadcrumbs";
-import ProtectedRoute from "./Auth/protectedRoutes";
+import ProtectedRoute from "./Auth/ProtectedRoutes";
 
 import useDebounce from "../hooks/useDebounce";
 import useCart from "../hooks/useCart";
