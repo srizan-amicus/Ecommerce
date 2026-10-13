@@ -8,6 +8,7 @@ interface ButtonProps {
   onClick?: () => void;
   className?: string;
   form?: string;
+  ariaLabel?: string;
 }
 
 function Button({
@@ -19,21 +20,36 @@ function Button({
   className = "",
   form,
 }: ButtonProps) {
-  const baseStyles = "w-48 h-12 font-bold text-base transition cursor-pointer";
+  const baseStyles =
+    "inline-flex shrink-0 items-center justify-center font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2";
 
-  const variantStyles = {
-    [ButtonVariant.Primary]: "bg-orange-500 text-white hover:bg-orange-600",
+  const variantStyles: Record<ButtonVariant, string> = {
+    [ButtonVariant.Primary]:
+      "min-h-11 w-full rounded-lg bg-orange-500 px-5 py-2.5 text-sm text-white hover:bg-orange-600",
 
     [ButtonVariant.Secondary]:
-      "bg-white text-gray-800 border-2 border-gray-500 hover:bg-gray-100",
+      "min-h-11 w-full rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm text-gray-800 hover:bg-gray-100",
 
     [ButtonVariant.Outline]:
-      "bg-white text-orange-600 border-2 border-orange-500 hover:bg-orange-500 hover:text-white",
+      "min-h-11 w-full rounded-lg border border-orange-500 bg-white px-5 py-2.5 text-sm text-orange-600 hover:bg-orange-500 hover:text-white",
 
-    [ButtonVariant.Danger]: "bg-red-700 text-white hover:bg-red-800",
+    [ButtonVariant.Danger]:
+      "min-h-11 w-full rounded-lg bg-red-600 px-5 py-2.5 text-sm text-white hover:bg-red-700",
 
     [ButtonVariant.Order]:
-      "mt-4 h-10 w-full bg-orange-600 text-xs font-bold text-white transition hover:bg-orange-700",
+      "mt-4 min-h-10 w-full rounded-lg bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-700",
+
+    // Compact square button for quantity decrease/increase
+    [ButtonVariant.QuantityAction]:
+      "h-9 w-9 rounded-md bg-orange-500 text-base text-white hover:bg-orange-600",
+
+    // Flexible width for displaying the quantity value
+    [ButtonVariant.Quantity]:
+      "h-9 min-w-10 rounded-md border border-gray-200 bg-white px-2 text-sm text-gray-900",
+
+    // Small actions that should not stretch to full width
+    [ButtonVariant.Compact]:
+      "min-h-9 rounded-lg px-3 py-2 text-sm text-orange-600 hover:bg-orange-50",
   };
 
   return (
@@ -41,7 +57,7 @@ function Button({
       type={type}
       form={form}
       className={`${baseStyles} ${variantStyles[variant]} ${className} ${
-        disabled ? "opacity-50 cursor-not-allowed" : ""
+        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
       }`}
       disabled={disabled}
       onClick={onClick}

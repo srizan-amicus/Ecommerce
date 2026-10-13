@@ -1,6 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { useAuthContext } from "../context/useAuthContext";
+import Button from "../components/Common/Button";
+import { ButtonVariant } from "../enums/button";
 
 interface LocationState {
   from?: {
@@ -39,18 +42,15 @@ function Login() {
 
   return (
     <main className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-4 py-12">
-      {" "}
       <section className="w-full max-w-md rounded-xl bg-white p-6 shadow-md sm:p-8">
-        {" "}
         <div className="mb-7 text-center">
-          {" "}
-          <h1 className="text-3xl font-bold text-gray-900">
-            Welcome Back{" "}
-          </h1>{" "}
+          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
+
           <p className="mt-2 text-sm text-gray-500">
-            Sign in to your Swift Cart account{" "}
-          </p>{" "}
+            Sign in to your Swift Cart account
+          </p>
         </div>
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label
@@ -59,6 +59,7 @@ function Login() {
             >
               Email Address
             </label>
+
             <input
               id="email"
               name="email"
@@ -79,6 +80,7 @@ function Login() {
             >
               Password
             </label>
+
             <input
               id="password"
               name="password"
@@ -111,14 +113,16 @@ function Login() {
             </p>
           )}
 
-          <button
+          <Button
             type="submit"
+            variant={ButtonVariant.Primary}
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
+            className="!w-full !rounded-lg !px-4 !py-3 !font-semibold disabled:!cursor-not-allowed disabled:!opacity-60"
           >
             {isSubmitting ? "Signing in..." : "Sign In"}
-          </button>
+          </Button>
         </form>
+
         <p className="mt-6 text-center text-sm text-gray-600">
           Want to keep browsing?{" "}
           <Link

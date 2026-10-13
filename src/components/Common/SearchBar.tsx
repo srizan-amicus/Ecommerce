@@ -1,3 +1,6 @@
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
+
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
@@ -25,17 +28,19 @@ function SearchBar({
           }
         }}
         placeholder={placeholder}
-        className="h-10 w-full rounded border border-gray-300 bg-white px-4 pr-11 text-sm text-gray-700 outline-none transition focus:border-orange-500"
+        aria-label={placeholder}
+        className="h-10 w-full rounded border border-gray-300 bg-white px-4 pr-12 text-sm text-gray-700 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
       />
 
-      <button
+      <Button
         type="button"
+        variant={ButtonVariant.Compact}
         onClick={onSearch}
-        className="absolute right-0 top-0 flex h-10 w-11 items-center justify-center text-xl text-orange-500 transition hover:bg-orange-50"
+        className="absolute right-0 top-0 !h-10 !min-h-10 !w-11 !min-w-0 !rounded-none !px-0 !py-0 text-xl text-orange-500 hover:bg-orange-50"
         aria-label="Search"
       >
         🔍
-      </button>
+      </Button>
     </div>
   );
 }

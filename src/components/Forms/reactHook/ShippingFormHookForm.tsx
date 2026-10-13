@@ -11,6 +11,9 @@ import ShippingFieldsHookForm from "./ShippingFieldsHookForm";
 import { createAddress, getAddresses } from "../../../api/addressApi";
 import type { Address } from "../../../api/addressApi";
 
+import Button from "../../Common/Button";
+import { ButtonVariant } from "../../../enums/button";
+
 type ShippingFormHookFormProps = {
   children?: React.ReactNode;
 };
@@ -44,6 +47,7 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
     getValues,
     control,
     trigger,
+    setValue,
     formState: { errors, isSubmitting },
   } = methods;
 
@@ -160,32 +164,41 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
   };
 
   const handleCountryChange = (value: string) => {
-    reset(
-      {
-        ...getValues(),
-        country: value,
-        state: "",
-        city: "",
-      },
-      {
-        keepErrors: false,
-        keepDirty: true,
-      },
-    );
+    // Update the selected country directly in React Hook Form.
+    // Clear dependent fields without resetting the entire form.
+    setValue("country", value, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+
+    setValue("state", "", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    setValue("city", "", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    setStates([]);
+    setCities([]);
   };
 
   const handleStateChange = (value: string) => {
-    reset(
-      {
-        ...getValues(),
-        state: value,
-        city: "",
-      },
-      {
-        keepErrors: false,
-        keepDirty: true,
-      },
-    );
+    setValue("state", value, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+
+    setValue("city", "", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    setCities([]);
   };
 
   const onSubmit = async (data: CheckoutFormData) => {
@@ -253,13 +266,14 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
                   Delivery address
                 </label>
 
-                <button
+                <Button
                   type="button"
+                  variant={ButtonVariant.Compact}
                   onClick={() => handleAddressSelection("new")}
-                  className="text-sm font-semibold text-orange-600 hover:text-orange-700"
+                  className="!h-auto !min-h-0 !w-auto !rounded-none !px-0 !py-0 !text-sm !font-semibold !text-orange-600 hover:!bg-transparent hover:!text-orange-700"
                 >
                   + Add new address
-                </button>
+                </Button>
               </div>
 
               <button
@@ -288,7 +302,10 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
                   </p>
                 </div>
 
-                <span className="shrink-0 text-xs text-gray-500">
+                <span
+                  className="shrink-0 text-xs text-gray-500"
+                  aria-hidden="true"
+                >
                   {isAddressPickerOpen ? "▲" : "▼"}
                 </span>
               </button>
@@ -363,13 +380,14 @@ function ShippingFormHookForm({ children }: ShippingFormHookFormProps) {
                     );
                   })}
 
-                  <button
+                  <Button
                     type="button"
+                    variant={ButtonVariant.Outline}
                     onClick={() => handleAddressSelection("new")}
-                    className="w-full rounded-lg border border-dashed border-gray-300 p-3 text-sm font-semibold text-orange-600 transition hover:border-orange-400 hover:bg-orange-50"
+                    className="!w-full !rounded-lg !border-dashed !border-gray-300 !px-3 !py-3 !text-sm !font-semibold !text-orange-600 hover:!border-orange-400 hover:!bg-orange-50"
                   >
                     + Use a new address
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

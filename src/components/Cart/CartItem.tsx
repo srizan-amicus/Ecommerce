@@ -1,5 +1,7 @@
 import type { CartItemApiResponse } from "../../api/cartApi";
 import QuantitySelector from "../Quantity/quantitySelector";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
 
 interface CartItemProps {
   item: CartItemApiResponse;
@@ -20,16 +22,18 @@ function CartItem({ item, onQuantityChange, onRemove }: CartItemProps) {
           />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <h3 className="font-bold text-gray-900">{item.productName}</h3>
 
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Compact}
             onClick={() => onRemove(item.productId)}
-            className="mt-1 text-sm text-red-500 hover:text-red-700"
+            ariaLabel={`Remove ${item.productName} from cart`}
+            className="!min-h-8 !w-auto !px-1 !py-1 !text-sm !text-red-500 hover:!bg-red-50 hover:!text-red-700"
           >
             Remove
-          </button>
+          </Button>
         </div>
       </div>
 

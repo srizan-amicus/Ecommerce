@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import CartItem from "./CartItem";
 import OrderSummary from "../Checkout/OrderSummary";
 import useCart from "../../hooks/useCart";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
 
 function Cart() {
   const {
@@ -69,13 +71,14 @@ function Cart() {
             Add some products to your cart to get started.
           </p>
 
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Primary}
             onClick={() => navigate("/products")}
-            className="mt-5 rounded-lg bg-orange-500 px-5 py-3 font-semibold text-white transition hover:bg-orange-600"
+            className="mt-5 !w-auto"
           >
             Continue Shopping
-          </button>
+          </Button>
         </div>
       </main>
     );
@@ -85,9 +88,9 @@ function Cart() {
     <main className="min-h-screen bg-gray-50 px-4 py-10">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
               Shopping Cart ({itemCount} Items)
             </h1>
 
@@ -95,13 +98,14 @@ function Cart() {
             {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
           </div>
 
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Danger}
             onClick={() => void emptyCart()}
-            className="text-sm text-red-500 hover:text-red-700"
+            className="!min-h-9 !w-auto !px-3 !py-2 !text-xs sm:!text-sm"
           >
             Clear Cart
-          </button>
+          </Button>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
@@ -110,11 +114,8 @@ function Cart() {
             {/* Column Headers */}
             <div className="hidden grid-cols-[2.2fr_1fr_1fr_1fr] bg-[#1f1f1f] px-4 py-3 text-sm font-bold text-white md:grid">
               <span className="flex items-center">Product</span>
-
               <span className="flex items-center">Unit Price</span>
-
               <span className="flex items-center justify-center">Qty</span>
-
               <span className="flex items-center">Total</span>
             </div>
 

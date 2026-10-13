@@ -2,6 +2,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import SearchBar from "../Common/SearchBar";
 import { useAuthContext } from "../../context/useAuthContext";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
 
 interface HeaderProps {
   searchTerm: string;
@@ -43,13 +45,14 @@ function Header({
       <div className="mx-auto max-w-[1280px] px-3 sm:px-4">
         {/* Top row: menu, logo, desktop search, navigation, cart and profile */}
         <div className="flex h-16 items-center gap-3 lg:gap-5">
-          <button
+          <Button
             type="button"
-            aria-label="Open menu"
-            className="shrink-0 cursor-pointer text-2xl text-orange-500"
+            variant={ButtonVariant.Compact}
+            ariaLabel="Open menu"
+            className="!h-11 !min-h-11 !w-11 !min-w-0 !rounded-lg !px-0 !py-0 text-2xl text-orange-500 hover:bg-orange-50"
           >
             ☰
-          </button>
+          </Button>
 
           <Link
             to="/"
@@ -123,10 +126,11 @@ function Header({
 
             {/* Profile dropdown */}
             <div className="group relative shrink-0">
-              <button
+              <Button
                 type="button"
-                aria-label="Open profile menu"
-                className="flex cursor-pointer items-center gap-1 rounded-full py-1 pl-1 sm:gap-2 sm:pl-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                variant={ButtonVariant.Compact}
+                ariaLabel="Open profile menu"
+                className="!h-11 !min-h-11 !w-auto !min-w-0 gap-2 !rounded-full !px-2 !py-1 hover:bg-orange-50 focus-visible:ring-2 focus-visible:ring-orange-500 sm:!px-3"
               >
                 {isLoggedIn && user?.name && (
                   <span className="hidden max-w-28 truncate text-gray-600 xl:inline">
@@ -166,7 +170,7 @@ function Header({
                     clipRule="evenodd"
                   />
                 </svg>
-              </button>
+              </Button>
 
               {/* Dropdown menu */}
               <div className="invisible absolute right-0 top-full z-50 w-44 translate-y-2 pt-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
@@ -183,10 +187,11 @@ function Header({
                         </div>
                       )}
 
-                      <button
+                      <Button
                         type="button"
+                        variant={ButtonVariant.Compact}
                         onClick={handleLogout}
-                        className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-orange-50 hover:text-orange-600"
+                        className="!h-auto !min-h-0 !w-full !min-w-0 justify-start gap-3 !rounded-none !px-4 !py-3 text-left text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +209,7 @@ function Header({
                           />
                         </svg>
                         Logout
-                      </button>
+                      </Button>
                     </>
                   ) : (
                     <Link

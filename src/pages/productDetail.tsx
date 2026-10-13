@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom";
 import { fetchProductById } from "../api/productsApi";
 import type { Product } from "../types/product";
 import type { AddToCartResult } from "../types/cart";
+import Button from "../components/Common/Button";
+import { ButtonVariant } from "../enums/button";
 
 interface ProductDetailProps {
   onAddToCart: (
@@ -18,7 +20,7 @@ function ProductDetailSkeleton() {
       <div className="mb-6 h-5 w-32 animate-pulse rounded bg-gray-200" />
 
       <div className="grid gap-10 md:grid-cols-2">
-        <div className="flex min-h-80 items-center justify-center rounded-xl bg-gray-100 animate-pulse">
+        <div className="flex min-h-80 animate-pulse items-center justify-center rounded-xl bg-gray-100">
           <div className="h-64 w-64 rounded-lg bg-gray-200" />
         </div>
 
@@ -210,18 +212,19 @@ function ProductDetail({ onAddToCart }: ProductDetailProps) {
             <p className="mb-2 text-sm font-medium text-gray-700">Quantity</p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center rounded-lg border border-gray-300">
-                <button
+              <div className="flex items-center gap-1 rounded-lg border border-gray-300 p-1">
+                <Button
                   type="button"
+                  variant={ButtonVariant.QuantityAction}
                   onClick={() =>
                     setQuantity((current) => Math.max(1, current - 1))
                   }
                   disabled={quantity <= 1 || addingToCart}
-                  aria-label="Decrease quantity"
-                  className="px-4 py-3 text-lg font-semibold disabled:cursor-not-allowed disabled:opacity-40"
+                  ariaLabel="Decrease quantity"
+                  className="!h-9 !w-9 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   −
-                </button>
+                </Button>
 
                 <span
                   className="min-w-10 text-center font-medium"
@@ -230,25 +233,27 @@ function ProductDetail({ onAddToCart }: ProductDetailProps) {
                   {quantity}
                 </span>
 
-                <button
+                <Button
                   type="button"
+                  variant={ButtonVariant.QuantityAction}
                   onClick={() => setQuantity((current) => current + 1)}
                   disabled={addingToCart}
-                  aria-label="Increase quantity"
-                  className="px-4 py-3 text-lg font-semibold disabled:cursor-not-allowed disabled:opacity-40"
+                  ariaLabel="Increase quantity"
+                  className="!h-9 !w-9 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   +
-                </button>
+                </Button>
               </div>
 
-              <button
+              <Button
                 type="button"
+                variant={ButtonVariant.Primary}
                 onClick={handleAddToCart}
                 disabled={addingToCart}
-                className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
+                className="!w-auto disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {addingToCart ? "Adding..." : "Add to Cart"}
-              </button>
+              </Button>
             </div>
           </div>
 

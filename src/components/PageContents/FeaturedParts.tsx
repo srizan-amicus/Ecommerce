@@ -6,6 +6,8 @@ import ProductCard from "../Products/ProductCards";
 import useProducts from "../../hooks/useProducts";
 import "swiper/css";
 import type { AddToCartResult } from "../../types/cart";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
 
 interface FeaturedPartsProps {
   onAddToCart: (
@@ -13,6 +15,7 @@ interface FeaturedPartsProps {
     quantity: number,
   ) => Promise<AddToCartResult>;
 }
+
 function FeaturedParts({ onAddToCart }: FeaturedPartsProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -27,16 +30,17 @@ function FeaturedParts({ onAddToCart }: FeaturedPartsProps) {
         </div>
 
         {/* Carousel */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-6">
           {/* Previous Arrow */}
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Compact}
             onClick={() => swiperRef.current?.slidePrev()}
-            className="shrink-0 text-5xl font-bold text-orange-600 hover:text-orange-700"
-            aria-label="Previous products"
+            ariaLabel="Previous products"
+            className="!h-10 !min-h-10 !w-10 !min-w-0 !shrink-0 !rounded-full !px-0 !py-0 text-3xl font-bold text-orange-600 hover:bg-orange-50 hover:text-orange-700 sm:!h-12 sm:!min-h-12 sm:!w-12"
           >
             ‹
-          </button>
+          </Button>
 
           {/* Products / Loading */}
           <div className="min-w-0 flex-1">
@@ -57,7 +61,7 @@ function FeaturedParts({ onAddToCart }: FeaturedPartsProps) {
                 }}
                 spaceBetween={16}
                 slidesPerView={4}
-                loop={true}
+                loop={apiProducts.length > 4}
                 breakpoints={{
                   0: {
                     slidesPerView: 1,
@@ -83,14 +87,15 @@ function FeaturedParts({ onAddToCart }: FeaturedPartsProps) {
           </div>
 
           {/* Next Arrow */}
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Compact}
             onClick={() => swiperRef.current?.slideNext()}
-            className="shrink-0 text-5xl font-bold text-orange-600 hover:text-orange-700"
-            aria-label="Next products"
+            ariaLabel="Next products"
+            className="!h-10 !min-h-10 !w-10 !min-w-0 !shrink-0 !rounded-full !px-0 !py-0 text-3xl font-bold text-orange-600 hover:bg-orange-50 hover:text-orange-700 sm:!h-12 sm:!min-h-12 sm:!w-12"
           >
             ›
-          </button>
+          </Button>
         </div>
       </div>
     </section>

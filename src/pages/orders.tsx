@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
   getOrderHistory,
   getOrderById,
@@ -7,10 +8,14 @@ import {
   type OrderHistoryItem,
   type OrderDetail,
 } from "../api/orderApi";
+
 import useCart from "../hooks/useCart";
+import Button from "../components/Common/Button";
+import { ButtonVariant } from "../enums/button";
 
 const PAGE_SIZE = 8;
 const TABS = ["All Orders", "Processing", "Shipped", "Delivered", "Cancelled"];
+
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600";
 
@@ -225,19 +230,22 @@ function Orders() {
 
           <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
             {TABS.map((value) => (
-              <button
+              <Button
                 key={value}
                 type="button"
+                variant={
+                  tab === value ? ButtonVariant.Primary : ButtonVariant.Compact
+                }
                 onClick={() => selectTab(value)}
                 aria-pressed={tab === value}
-                className={`shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold ${
+                className={`!w-auto !shrink-0 !rounded-xl !px-4 !py-2.5 !text-sm !font-semibold ${
                   tab === value
-                    ? "bg-orange-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-orange-50"
+                    ? ""
+                    : "!bg-gray-100 !text-gray-600 hover:!bg-orange-50"
                 }`}
               >
                 {value}
-              </button>
+              </Button>
             ))}
           </div>
         </section>
@@ -261,17 +269,18 @@ function Orders() {
           >
             {error}
 
-            <button
+            <Button
               type="button"
+              variant={ButtonVariant.Compact}
               onClick={() => {
                 setLoading(true);
                 setError("");
                 setRetry((value) => value + 1);
               }}
-              className="ml-3 font-bold underline"
+              className="!ml-3 !w-auto !rounded-md !px-2 !py-1 !font-bold !underline"
             >
               Try again
-            </button>
+            </Button>
           </div>
         )}
 
@@ -290,7 +299,9 @@ function Orders() {
           </div>
         ) : !error && visibleOrders.length === 0 ? (
           <section className="rounded-2xl border bg-white px-6 py-14 text-center">
-            <div className="text-4xl">🛍️</div>
+            <div className="text-4xl" aria-hidden="true">
+              🛍️
+            </div>
 
             <h2 className="mt-4 text-xl font-bold">
               {search
@@ -307,13 +318,14 @@ function Orders() {
             </p>
 
             {search ? (
-              <button
+              <Button
                 type="button"
+                variant={ButtonVariant.Compact}
                 onClick={() => setSearch("")}
-                className="mt-4 font-bold text-orange-600"
+                className="!mt-4 !w-auto !px-2 !py-1 !font-bold !text-orange-600"
               >
                 Clear search
-              </button>
+              </Button>
             ) : (
               <Link
                 to="/products"
@@ -420,25 +432,27 @@ function Orders() {
                     </div>
 
                     <div className="flex flex-wrap justify-end gap-2">
-                      <button
+                      <Button
                         type="button"
+                        variant={ButtonVariant.Outline}
                         onClick={() => void toggleDetails(order.orderId)}
-                        className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-bold hover:border-orange-300 hover:bg-orange-50"
+                        className="!w-auto !rounded-xl !px-4 !py-2.5 !text-sm !font-bold"
                       >
                         {expandedId === order.orderId
                           ? "Hide Details"
                           : "View Details"}
-                      </button>
+                      </Button>
 
-                      {/* Reorder is available for every order status */}
-                      <button
+                      {/* Reorder is available for every order status. */}
+                      <Button
                         type="button"
+                        variant={ButtonVariant.Secondary}
                         disabled={busyId === order.orderId}
                         onClick={() => void handleReorder(order.orderId)}
-                        className="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-orange-600 disabled:opacity-50"
+                        className="!w-auto !rounded-xl !bg-gray-900 !px-4 !py-2.5 !text-sm !font-bold !text-white hover:!bg-orange-600 disabled:!opacity-50"
                       >
                         {busyId === order.orderId ? "Adding..." : "Reorder"}
-                      </button>
+                      </Button>
                     </div>
 
                     {expandedId === order.orderId && (
@@ -537,29 +551,31 @@ function Orders() {
             </p>
 
             <div className="flex gap-2">
-              <button
+              <Button
                 type="button"
+                variant={ButtonVariant.Outline}
                 disabled={page === 1}
                 onClick={() => {
                   setLoading(true);
                   setPage((value) => value - 1);
                 }}
-                className="rounded-xl border px-4 py-2 text-sm font-semibold disabled:opacity-40"
+                className="!w-auto !rounded-xl !border !px-4 !py-2 !text-sm !font-semibold disabled:!opacity-40"
               >
                 Previous
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
+                variant={ButtonVariant.Outline}
                 disabled={page >= totalPages}
                 onClick={() => {
                   setLoading(true);
                   setPage((value) => value + 1);
                 }}
-                className="rounded-xl border px-4 py-2 text-sm font-semibold disabled:opacity-40"
+                className="!w-auto !rounded-xl !border !px-4 !py-2 !text-sm !font-semibold disabled:!opacity-40"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </nav>
         )}

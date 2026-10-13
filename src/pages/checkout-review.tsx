@@ -2,12 +2,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import OrderSuccessToast from "../components/Common/OrderSuccessToast";
+import Button from "../components/Common/Button";
 import useCart from "../hooks/useCart";
 import CheckoutSteps from "../components/Checkout/CheckoutSteps";
 import OrderSummary from "../components/Checkout/OrderSummary";
 
 import { processMockPayment } from "../api/paymentApi";
 import type { CreateOrderResponse } from "../api/orderApi";
+import { ButtonVariant } from "../enums/button";
 
 interface ReviewNavigationState {
   addressId: number;
@@ -34,13 +36,14 @@ function CheckoutReview() {
           Your review session has expired. Please return to checkout.
         </p>
 
-        <button
+        <Button
           type="button"
+          variant={ButtonVariant.Primary}
           onClick={() => navigate("/checkout", { replace: true })}
-          className="mt-4 rounded-lg bg-orange-500 px-4 py-2 font-semibold text-white hover:bg-orange-600"
+          className="mt-4 !w-auto !rounded-lg !px-4 !py-2"
         >
           Return to Shipping
-        </button>
+        </Button>
       </main>
     );
   }
@@ -49,13 +52,15 @@ function CheckoutReview() {
     return (
       <main className="mx-auto max-w-3xl px-6 py-10">
         <p>Your cart is empty.</p>
-        <button
+
+        <Button
           type="button"
+          variant={ButtonVariant.Primary}
           onClick={() => navigate("/product-list")}
-          className="mt-4 rounded-lg bg-orange-500 px-4 py-2 font-semibold text-white hover:bg-orange-600"
+          className="mt-4 !w-auto !rounded-lg !px-4 !py-2"
         >
           Continue Shopping
-        </button>
+        </Button>
       </main>
     );
   }
@@ -87,14 +92,14 @@ function CheckoutReview() {
         return;
       }
 
-      // Show confirmation only after payment has been validated.
+      // Confirm the order only after payment has been validated.
       setConfirmedOrderId(checkout.orderId);
 
       // Empty the cart without hiding the success toast.
       try {
         await emptyCart();
       } catch (cartError) {
-        // Payment has succeeded, so don't show a payment failure.
+        // Payment succeeded, so don't report it as a payment failure.
         console.error("Payment succeeded, but cart cleanup failed:", cartError);
       }
 
@@ -142,9 +147,11 @@ function CheckoutReview() {
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-600">
           Almost there
         </p>
+
         <h1 className="mt-1 text-2xl font-extrabold text-gray-950 sm:text-3xl">
           Review Your Order<span className="text-orange-500">.</span>
         </h1>
+
         <p className="mt-2 text-sm text-gray-500">
           Check your details and order total before placing your order.
         </p>
@@ -160,24 +167,27 @@ function CheckoutReview() {
                 SHIPPING DETAILS
               </h2>
 
-              <button
+              <Button
                 type="button"
+                variant={ButtonVariant.Compact}
                 disabled={isBusy}
                 onClick={() => navigate("/checkout")}
-                className="text-sm font-bold text-orange-400 hover:text-orange-300 disabled:opacity-50"
+                className="!w-auto !rounded-md !px-2 !py-1 !text-sm !font-bold !text-orange-400 hover:!text-orange-300 disabled:!opacity-50"
               >
                 EDIT
-              </button>
+              </Button>
             </div>
 
             <div className="p-5 text-sm">
               <p className="text-gray-500">Address ID</p>
+
               <p className="mt-1 font-semibold text-gray-900">
                 {state.addressId}
               </p>
 
               <div className="mt-4">
                 <p className="text-gray-500">Shipping method</p>
+
                 <p className="mt-1 font-semibold text-gray-900">
                   {state.shippingMethod}
                 </p>
@@ -191,14 +201,15 @@ function CheckoutReview() {
                 PAYMENT METHOD
               </h2>
 
-              <button
+              <Button
                 type="button"
+                variant={ButtonVariant.Compact}
                 disabled={isBusy}
                 onClick={handleEditPayment}
-                className="text-sm font-bold text-orange-400 hover:text-orange-300 disabled:opacity-50"
+                className="!w-auto !rounded-md !px-2 !py-1 !text-sm !font-bold !text-orange-400 hover:!text-orange-300 disabled:!opacity-50"
               >
                 EDIT
-              </button>
+              </Button>
             </div>
 
             <div className="flex items-center gap-3 p-5">
@@ -222,6 +233,7 @@ function CheckoutReview() {
                     ? "Mock Payment"
                     : state.paymentMethod}
                 </p>
+
                 <p className="mt-1 text-xs text-gray-500">
                   Selected payment method
                 </p>
@@ -246,6 +258,7 @@ function CheckoutReview() {
                     <p className="break-words font-semibold text-gray-900">
                       {item.productName}
                     </p>
+
                     <p className="mt-1 text-sm text-gray-500">
                       Qty: {item.quantity} × ₹{item.price.toFixed(2)}
                     </p>

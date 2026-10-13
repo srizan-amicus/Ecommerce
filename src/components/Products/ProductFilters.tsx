@@ -2,6 +2,8 @@ import { useState } from "react";
 import CategoryFilter from "../Category/CategoryFilter";
 import SortFilter from "../Filters/SortFilter";
 import { SortBy, SortOrder } from "../../enums/sort";
+import { ButtonVariant } from "../../enums/button";
+import Button from "../Common/Button";
 
 interface FilterOption {
   id: number;
@@ -72,15 +74,11 @@ function ProductFilters({
   onClearFilters,
 }: ProductFiltersProps) {
   const [showAllCategories, setShowAllCategories] = useState(false);
-
   const [showAllBrands, setShowAllBrands] = useState(false);
 
   const activeCategory = isMobile ? draftCategory : selectedCategory;
-
   const activeBrand = isMobile ? draftBrand : selectedBrand;
-
   const activePriceRange = isMobile ? draftPriceRange : selectedPriceRange;
-
   const activeRating = isMobile ? draftRating : selectedRating;
 
   const hasActiveFilters =
@@ -88,6 +86,9 @@ function ProductFilters({
     selectedBrand !== null ||
     selectedPriceRange !== "" ||
     selectedRating !== null;
+
+  const compactButtonStyles =
+    "!min-h-8 !w-auto !rounded-md !px-2 !py-1 !text-[11px] font-medium text-orange-500 hover:bg-orange-50 hover:text-orange-600";
 
   return (
     <div className="space-y-7">
@@ -97,13 +98,14 @@ function ProductFilters({
           <h3 className="text-sm font-semibold text-gray-800">Category</h3>
 
           {!isMobile && hasActiveFilters && (
-            <button
+            <Button
               type="button"
+              variant={ButtonVariant.Compact}
               onClick={onClearFilters}
-              className="cursor-pointer text-[11px] font-medium text-orange-500 hover:text-orange-600"
+              className={compactButtonStyles}
             >
               Clear
-            </button>
+            </Button>
           )}
         </div>
 
@@ -114,13 +116,14 @@ function ProductFilters({
         />
 
         {categories.length > 3 && (
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Compact}
             onClick={() => setShowAllCategories((current) => !current)}
-            className="mt-2 text-[11px] font-medium text-orange-500 hover:text-orange-600"
+            className={`mt-2 ${compactButtonStyles}`}
           >
             {showAllCategories ? "View less" : "View more"}
-          </button>
+          </Button>
         )}
       </section>
 
@@ -148,13 +151,14 @@ function ProductFilters({
         </div>
 
         {brands.length > 3 && (
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Compact}
             onClick={() => setShowAllBrands((current) => !current)}
-            className="mt-2 text-[11px] font-medium text-orange-500 hover:text-orange-600"
+            className={`mt-2 ${compactButtonStyles}`}
           >
             {showAllBrands ? "View less" : "View more"}
-          </button>
+          </Button>
         )}
       </section>
 
@@ -201,13 +205,14 @@ function ProductFilters({
             <span>Above ₹50,000</span>
           </label>
 
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Compact}
             onClick={() => onPriceRangeChange("")}
-            className="text-[11px] font-medium text-orange-500 hover:text-orange-600"
+            className={compactButtonStyles}
           >
             Clear price
-          </button>
+          </Button>
         </div>
       </section>
 
@@ -235,13 +240,14 @@ function ProductFilters({
             </label>
           ))}
 
-          <button
+          <Button
             type="button"
+            variant={ButtonVariant.Compact}
             onClick={() => onRatingChange(null)}
-            className="text-[11px] font-medium text-orange-500 hover:text-orange-600"
+            className={compactButtonStyles}
           >
             Clear rating
-          </button>
+          </Button>
         </div>
       </section>
 

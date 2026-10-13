@@ -1,4 +1,6 @@
 import { useState, type ChangeEvent } from "react";
+import Button from "../Common/Button";
+import { ButtonVariant } from "../../enums/button";
 
 interface QuantitySelectorProps {
   quantity: number;
@@ -87,13 +89,16 @@ function QuantitySelector({
 
   return (
     <div className="my-1 flex items-center gap-1">
-      <button
+      <Button
+        type="button"
+        variant={ButtonVariant.QuantityAction}
         onClick={decrease}
         disabled={quantity <= min}
-        className="h-7 w-7 rounded border disabled:opacity-40"
+        ariaLabel="Decrease quantity"
+        className="!h-7 !w-7 !rounded border border-gray-200 disabled:opacity-40"
       >
         −
-      </button>
+      </Button>
 
       <input
         type="number"
@@ -102,16 +107,20 @@ function QuantitySelector({
         max={max}
         onChange={handleInputChange}
         onBlur={finalizeInputValue}
-        className="w-14 border-y border-gray-300 text-center outline-none"
+        aria-label="Quantity"
+        className="h-9 w-14 rounded border border-gray-300 text-center text-sm outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-200"
       />
 
-      <button
+      <Button
+        type="button"
+        variant={ButtonVariant.QuantityAction}
         onClick={increase}
         disabled={max !== undefined && quantity >= max}
-        className="h-7 w-7 rounded border disabled:opacity-40"
+        ariaLabel="Increase quantity"
+        className="!h-7 !w-7 !rounded border border-gray-200 disabled:opacity-40"
       >
         +
-      </button>
+      </Button>
     </div>
   );
 }

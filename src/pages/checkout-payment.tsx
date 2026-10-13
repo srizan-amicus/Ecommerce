@@ -4,7 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useCart from "../hooks/useCart";
 import CheckoutSteps from "../components/Checkout/CheckoutSteps";
 import OrderSummary from "../components/Checkout/OrderSummary";
+import Button from "../components/Common/Button";
 
+import { ButtonVariant } from "../enums/button";
 import { SHIPPING_METHODS } from "../constants/shipping";
 import { createOrder } from "../api/orderApi";
 
@@ -73,13 +75,15 @@ function CheckoutPayment() {
         <p className="text-red-600">
           Your checkout session is missing its shipping address.
         </p>
-        <button
+
+        <Button
           type="button"
+          variant={ButtonVariant.Primary}
           onClick={() => navigate("/checkout", { replace: true })}
-          className="mt-4 rounded-xl bg-orange-500 px-4 py-2 font-semibold text-white hover:bg-orange-600"
+          className="!mt-4 !w-auto !rounded-xl !px-4 !py-2"
         >
           Return to Shipping
-        </button>
+        </Button>
       </main>
     );
   }
@@ -88,13 +92,15 @@ function CheckoutPayment() {
     return (
       <main className="mx-auto max-w-3xl px-6 py-10">
         <p>Your cart is empty.</p>
-        <button
+
+        <Button
           type="button"
+          variant={ButtonVariant.Primary}
           onClick={() => navigate("/cart")}
-          className="mt-4 rounded-xl bg-orange-500 px-4 py-2 font-semibold text-white hover:bg-orange-600"
+          className="!mt-4 !w-auto !rounded-xl !px-4 !py-2"
         >
           Return to Cart
-        </button>
+        </Button>
       </main>
     );
   }
@@ -154,6 +160,7 @@ function CheckoutPayment() {
       });
     } catch (error) {
       console.error("Checkout calculation failed:", error);
+
       setMessage(
         error instanceof Error
           ? error.message
@@ -166,6 +173,7 @@ function CheckoutPayment() {
 
   const selectedCard =
     "border-orange-500 bg-orange-50/70 ring-1 ring-orange-500";
+
   const unselectedCard =
     "border-gray-200 bg-white hover:border-orange-300 hover:bg-orange-50/30";
 
@@ -175,9 +183,11 @@ function CheckoutPayment() {
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-600">
           Almost there
         </p>
+
         <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-gray-950 sm:text-3xl">
           Payment<span className="text-orange-500">.</span>
         </h1>
+
         <p className="mt-2 text-sm text-gray-500">
           Choose your delivery speed and preferred payment method.
         </p>
@@ -191,6 +201,7 @@ function CheckoutPayment() {
             <h2 className="text-sm font-bold tracking-wide">
               SHIPPING & PAYMENT
             </h2>
+
             <p className="mt-1 text-xs text-gray-400">
               Select the options that work for you.
             </p>
@@ -201,6 +212,7 @@ function CheckoutPayment() {
               <legend className="text-base font-bold text-gray-950">
                 Shipping method
               </legend>
+
               <p className="mt-1 text-sm text-gray-500">
                 How quickly would you like your order?
               </p>
@@ -208,6 +220,7 @@ function CheckoutPayment() {
               <div className="mt-4 grid gap-3">
                 {SHIPPING_METHODS.map((method) => {
                   const selected = shippingMethod === method.value;
+
                   const details = SHIPPING_DETAILS[method.value] ?? {
                     description: "Choose this delivery option",
                     icon: "↗",
@@ -216,7 +229,9 @@ function CheckoutPayment() {
                   return (
                     <label
                       key={method.value}
-                      className={`flex cursor-pointer items-center gap-4 rounded-xl border p-4 transition duration-200 ${selected ? selectedCard : unselectedCard}`}
+                      className={`flex cursor-pointer items-center gap-4 rounded-xl border p-4 transition duration-200 ${
+                        selected ? selectedCard : unselectedCard
+                      }`}
                     >
                       <input
                         type="radio"
@@ -242,6 +257,7 @@ function CheckoutPayment() {
                         <span className="block font-bold text-gray-900">
                           {method.label}
                         </span>
+
                         <span className="mt-1 block text-xs leading-5 text-gray-500 sm:text-sm">
                           {details.description}
                         </span>
@@ -251,6 +267,7 @@ function CheckoutPayment() {
                         <span className="block font-extrabold text-gray-950">
                           ₹{method.price.toFixed(2)}
                         </span>
+
                         <span className="mt-1 block text-xs text-gray-500">
                           {selected ? "Selected" : "Delivery"}
                         </span>
@@ -290,6 +307,7 @@ function CheckoutPayment() {
               <legend className="text-base font-bold text-gray-950">
                 Payment method
               </legend>
+
               <p className="mt-1 text-sm text-gray-500">
                 Choose how you prefer to pay.
               </p>
@@ -328,6 +346,7 @@ function CheckoutPayment() {
                       <span className="mt-4 font-bold text-gray-900">
                         {method.title}
                       </span>
+
                       <span className="mt-1 text-xs leading-5 text-gray-500">
                         {method.description}
                       </span>
@@ -368,18 +387,19 @@ function CheckoutPayment() {
                 review.
               </p>
 
-              <button
+              <Button
                 type="button"
+                variant={ButtonVariant.Outline}
                 disabled={isSubmitting}
                 onClick={() =>
                   navigate("/checkout", {
                     state: { addressId: state.addressId },
                   })
                 }
-                className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-bold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:opacity-50"
+                className="!w-auto !rounded-xl !border-gray-200 !px-5 !py-3 !text-sm !font-bold !text-gray-700 hover:!border-gray-300 hover:!bg-gray-50 disabled:!opacity-50"
               >
                 ← Back to Shipping
-              </button>
+              </Button>
             </div>
           </div>
         </section>
@@ -399,6 +419,7 @@ function CheckoutPayment() {
             actionLabel={isSubmitting ? "CALCULATING..." : "REVIEW ORDER"}
             onAction={handleReviewOrder}
           />
+
           <p className="mt-3 text-center text-xs leading-5 text-gray-500">
             Final shipping charges and totals are confirmed at checkout.
           </p>
