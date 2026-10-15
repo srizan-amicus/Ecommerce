@@ -53,14 +53,8 @@ export function validateField(
       return "";
 
     case "streetAddress": {
-      const trimmedValue = value.trim();
-
-      if (!trimmedValue) {
+      if (!value.trim()) {
         return "Street Address is required.";
-      }
-
-      if (trimmedValue.length < 10) {
-        return "Street Address must be at least 10 characters.";
       }
 
       return "";

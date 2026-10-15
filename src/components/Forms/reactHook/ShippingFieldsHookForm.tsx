@@ -100,9 +100,6 @@ function ShippingFieldsHookForm({
         type="text"
         {...register("streetAddress", {
           required: "Street Address is required.",
-          validate: (value) =>
-            value.trim().length >= 10 ||
-            "Street Address must be at least 10 characters.",
         })}
         error={errors.streetAddress?.message}
       />
@@ -147,9 +144,7 @@ function ShippingFieldsHookForm({
           </select>
 
           {errors.city && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.city.message}
-            </p>
+            <p className="mt-1 text-xs text-red-500">{errors.city.message}</p>
           )}
         </div>
 
@@ -185,9 +180,7 @@ function ShippingFieldsHookForm({
           </select>
 
           {errors.state && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.state.message}
-            </p>
+            <p className="mt-1 text-xs text-red-500">{errors.state.message}</p>
           )}
         </div>
       </div>
