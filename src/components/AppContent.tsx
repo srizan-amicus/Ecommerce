@@ -11,21 +11,31 @@ import PageNotFound from "../pages/page-not-found";
 
 import Header from "./PageContents/Header";
 import Footer from "./PageContents/Footer";
-import Cart from "./Cart/Cart";
 import Toast from "./Common/Toast";
 import Breadcrumbs from "./Common/Breadcrumbs";
 import ProtectedRoute from "./Auth/ProtectedRoutes";
+import ErrorBoundary from "./Common/ErrorBoundary";
 
 import useDebounce from "../hooks/useDebounce";
 import useCart from "../hooks/useCart";
 
 import type { AddToCartResult } from "../types/cart";
 
+// Lazy-loaded pages
+const Cart = lazy(() => import("./Cart/Cart"));
 const CheckoutControlled = lazy(() => import("../pages/checkout-controlled"));
 const CheckoutHookForm = lazy(() => import("../pages/checkout-hook-form"));
-const Orders = lazy(() => import("../pages/orders"));
 const CheckoutPayment = lazy(() => import("../pages/checkout-payment"));
 const CheckoutReview = lazy(() => import("../pages/checkout-review"));
+const Orders = lazy(() => import("../pages/orders"));
+
+interface PageErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+function PageErrorBoundary({ children }: PageErrorBoundaryProps) {
+  return <ErrorBoundary>{children}</ErrorBoundary>;
+}
 
 function SharedLayout() {
   return (
@@ -43,7 +53,8 @@ function AppContent() {
 
   const { cartItems, subtotal, addToCart } = useCart();
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  // Wait 300 ms after the user stops typing.
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -90,54 +101,106 @@ function AppContent() {
       >
         <Routes>
           <Route element={<SharedLayout />}>
-            <Route path="/" element={<Home onAddToCart={handleAddToCart} />} />
+            <Route
+              path="/"
+              element={
+                <PageErrorBoundary>
+                  <Home onAddToCart={handleAddToCart} />
+                </PageErrorBoundary>
+              }
+            />
 
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/login"
+              element={
+                <PageErrorBoundary>
+                  <Login />
+                </PageErrorBoundary>
+              }
+            />
 
-            <Route path="/showcase" element={<Showcase />} />
+            <Route
+              path="/showcase"
+              element={
+                <PageErrorBoundary>
+                  <Showcase />
+                </PageErrorBoundary>
+              }
+            />
 
             <Route
               path="/products"
               element={
-                <ProductList
-                  searchTerm={debouncedSearchTerm}
-                  onAddToCart={handleAddToCart}
-                />
+                <PageErrorBoundary>
+                  <ProductList
+                    searchTerm={debouncedSearchTerm}
+                    onAddToCart={handleAddToCart}
+                  />
+                </PageErrorBoundary>
               }
             />
 
             <Route
               path="/product-list"
               element={
-                <ProductList
-                  searchTerm={debouncedSearchTerm}
-                  onAddToCart={handleAddToCart}
-                />
+                <PageErrorBoundary>
+                  <ProductList
+                    searchTerm={debouncedSearchTerm}
+                    onAddToCart={handleAddToCart}
+                  />
+                </PageErrorBoundary>
               }
             />
 
             {/* Legacy product listing */}
-            <Route path="/products-legacy" element={<Products />} />
+            <Route
+              path="/products-legacy"
+              element={
+                <PageErrorBoundary>
+                  <Products />
+                </PageErrorBoundary>
+              }
+            />
 
             {/* Product detail routes */}
             <Route
               path="/product/:id"
-              element={<ProductDetail onAddToCart={handleAddToCart} />}
+              element={
+                <PageErrorBoundary>
+                  <ProductDetail onAddToCart={handleAddToCart} />
+                </PageErrorBoundary>
+              }
             />
 
             <Route
               path="/products/:id"
-              element={<ProductDetail onAddToCart={handleAddToCart} />}
+              element={
+                <PageErrorBoundary>
+                  <ProductDetail onAddToCart={handleAddToCart} />
+                </PageErrorBoundary>
+              }
             />
 
+            {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
-              {/* Cart reads its data directly from CartContext */}
-              <Route path="/cart" element={<Cart />} />
+              <Route
+                path="/cart"
+                element={
+                  <PageErrorBoundary>
+                    <Cart />
+                  </PageErrorBoundary>
+                }
+              />
 
               <Route
                 path="/checkout"
                 element={
-                  <CheckoutHookForm cartItems={cartItems} subtotal={subtotal} />
+                  <PageErrorBoundary>
+                    <CheckoutHookForm
+                      cartItems={cartItems}
+                      subtotal={subtotal}
+                    />
+                  </PageErrorBoundary>
                 }
               />
 
@@ -145,20 +208,52 @@ function AppContent() {
                 path="/checkout-hook-form"
                 element={<Navigate to="/checkout" replace />}
               />
-              <Route path="/checkout/payment" element={<CheckoutPayment />} />
 
-              <Route path="/checkout/review" element={<CheckoutReview />} />
-              <Route path="/checkout/payment" element={<CheckoutPayment />} />
+              <Route
+                path="/checkout/payment"
+                element={
+                  <PageErrorBoundary>
+                    <CheckoutPayment />
+                  </PageErrorBoundary>
+                }
+              />
+
+              <Route
+                path="/checkout/review"
+                element={
+                  <PageErrorBoundary>
+                    <CheckoutReview />
+                  </PageErrorBoundary>
+                }
+              />
 
               <Route
                 path="/checkout-controlled"
-                element={<CheckoutControlled />}
+                element={
+                  <PageErrorBoundary>
+                    <CheckoutControlled />
+                  </PageErrorBoundary>
+                }
               />
 
-              <Route path="/orders" element={<Orders />} />
+              <Route
+                path="/orders"
+                element={
+                  <PageErrorBoundary>
+                    <Orders />
+                  </PageErrorBoundary>
+                }
+              />
             </Route>
 
-            <Route path="*" element={<PageNotFound />} />
+            <Route
+              path="*"
+              element={
+                <PageErrorBoundary>
+                  <PageNotFound />
+                </PageErrorBoundary>
+              }
+            />
           </Route>
         </Routes>
       </Suspense>

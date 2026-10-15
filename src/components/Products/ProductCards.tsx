@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { Product } from "../../types/product";
@@ -239,4 +239,4 @@ function ProductCard({
   );
 }
 
-export default ProductCard;
+export default memo(ProductCard);

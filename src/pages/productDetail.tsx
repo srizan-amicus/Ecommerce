@@ -4,7 +4,9 @@ import { Link, useParams } from "react-router-dom";
 import { fetchProductById } from "../api/productsApi";
 import type { Product } from "../types/product";
 import type { AddToCartResult } from "../types/cart";
+
 import Button from "../components/Common/Button";
+import PageMetadata from "../components/Common/PageMetadata";
 import { ButtonVariant } from "../enums/button";
 
 interface ProductDetailProps {
@@ -79,7 +81,6 @@ function ProductDetail({ onAddToCart }: ProductDetailProps) {
 
       try {
         const result = await fetchProductById(productId, controller.signal);
-
         setProduct(result);
       } catch (err) {
         if (controller.signal.aborted) return;
@@ -128,162 +129,184 @@ function ProductDetail({ onAddToCart }: ProductDetailProps) {
 
   if (error || !product) {
     return (
-      <main className="mx-auto max-w-6xl px-4 py-12">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-6">
-          <h1 className="text-xl font-bold text-red-700">
-            Unable to load product
-          </h1>
+      <>
+        <PageMetadata
+          title="Product Not Found — SwiftCart"
+          description="The requested product could not be loaded. Browse SwiftCart to discover available products."
+        />
 
-          <p className="mt-2 text-red-600">{error ?? "Product not found."}</p>
+        <main className="mx-auto max-w-6xl px-4 py-12">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6">
+            <h1 className="text-xl font-bold text-red-700">
+              Unable to load product
+            </h1>
 
-          <Link
-            to="/products"
-            className="mt-5 inline-block font-semibold text-orange-600 hover:text-orange-700"
-          >
-            Back to Products
-          </Link>
-        </div>
-      </main>
+            <p className="mt-2 text-red-600">{error ?? "Product not found."}</p>
+
+            <Link
+              to="/products"
+              className="mt-5 inline-block font-semibold text-orange-600 hover:text-orange-700"
+            >
+              Back to Products
+            </Link>
+          </div>
+        </main>
+      </>
     );
   }
 
+  const productDescription = product.description?.trim();
+
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
-      <Link
-        to="/products"
-        className="mb-6 inline-block text-sm font-medium text-gray-600 hover:text-orange-600"
-      >
-        ← Back to Products
-      </Link>
+    <>
+      <PageMetadata
+        title={`${product.name} — SwiftCart`}
+        description={
+          productDescription
+            ? productDescription.slice(0, 160)
+            : `Explore ${product.name}${product.brand ? ` by ${product.brand}` : ""} on SwiftCart. View product details and pricing.`
+        }
+      />
 
-      <div className="grid gap-10 md:grid-cols-2">
-        <div className="flex min-h-80 items-center justify-center rounded-xl bg-gray-50 p-6">
-          {product.imageUrl ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="max-h-96 w-full object-contain"
-            />
-          ) : (
-            <div className="text-gray-400">No image available</div>
-          )}
-        </div>
+      <main className="mx-auto max-w-6xl px-4 py-8">
+        <Link
+          to="/products"
+          className="mb-6 inline-block text-sm font-medium text-gray-600 hover:text-orange-600"
+        >
+          ← Back to Products
+        </Link>
 
-        <section>
-          {product.category && (
-            <p className="text-sm font-semibold uppercase tracking-wide text-orange-600">
-              {product.category}
-            </p>
-          )}
-
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
-            {product.name}
-          </h1>
-
-          {product.brand && (
-            <p className="mt-3 text-gray-600">Brand: {product.brand}</p>
-          )}
-
-          {product.rating != null && (
-            <p className="mt-3 text-sm text-gray-600">
-              Rating: ⭐ {product.rating}
-            </p>
-          )}
-
-          <div className="mt-6">
-            <p className="text-sm text-gray-500">Price per item</p>
-
-            <p className="mt-1 text-2xl font-bold text-gray-900">
-              ₹{product.price.toLocaleString("en-IN")}
-            </p>
+        <div className="grid gap-10 md:grid-cols-2">
+          <div className="flex min-h-80 items-center justify-center rounded-xl bg-gray-50 p-6">
+            {product.imageUrl ? (
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="max-h-96 w-full object-contain"
+              />
+            ) : (
+              <div className="text-gray-400">No image available</div>
+            )}
           </div>
 
-          {product.description && (
-            <div className="mt-5">
-              <h2 className="font-semibold text-gray-900">Description</h2>
+          <section>
+            {product.category && (
+              <p className="text-sm font-semibold uppercase tracking-wide text-orange-600">
+                {product.category}
+              </p>
+            )}
 
-              <p className="mt-2 leading-7 text-gray-600">
-                {product.description}
+            <h1 className="mt-2 text-3xl font-bold text-gray-900">
+              {product.name}
+            </h1>
+
+            {product.brand && (
+              <p className="mt-3 text-gray-600">Brand: {product.brand}</p>
+            )}
+
+            {product.rating != null && (
+              <p className="mt-3 text-sm text-gray-600">
+                Rating: ⭐ {product.rating}
+              </p>
+            )}
+
+            <div className="mt-6">
+              <p className="text-sm text-gray-500">Price per item</p>
+
+              <p className="mt-1 text-2xl font-bold text-gray-900">
+                ₹{product.price.toLocaleString("en-IN")}
               </p>
             </div>
-          )}
 
-          <div className="mt-6">
-            <p className="mb-2 text-sm font-medium text-gray-700">Quantity</p>
+            {product.description && (
+              <div className="mt-5">
+                <h2 className="font-semibold text-gray-900">Description</h2>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-1 rounded-lg border border-gray-300 p-1">
+                <p className="mt-2 leading-7 text-gray-600">
+                  {product.description}
+                </p>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <p className="mb-2 text-sm font-medium text-gray-700">Quantity</p>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-1 rounded-lg border border-gray-300 p-1">
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.QuantityAction}
+                    onClick={() =>
+                      setQuantity((current) => Math.max(1, current - 1))
+                    }
+                    disabled={quantity <= 1 || addingToCart}
+                    ariaLabel="Decrease quantity"
+                    className="!h-9 !w-9 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    −
+                  </Button>
+
+                  <span
+                    className="min-w-10 text-center font-medium"
+                    aria-live="polite"
+                  >
+                    {quantity}
+                  </span>
+
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.QuantityAction}
+                    onClick={() => setQuantity((current) => current + 1)}
+                    disabled={addingToCart}
+                    ariaLabel="Increase quantity"
+                    className="!h-9 !w-9 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    +
+                  </Button>
+                </div>
+
                 <Button
                   type="button"
-                  variant={ButtonVariant.QuantityAction}
-                  onClick={() =>
-                    setQuantity((current) => Math.max(1, current - 1))
-                  }
-                  disabled={quantity <= 1 || addingToCart}
-                  ariaLabel="Decrease quantity"
-                  className="!h-9 !w-9 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  −
-                </Button>
-
-                <span
-                  className="min-w-10 text-center font-medium"
-                  aria-live="polite"
-                >
-                  {quantity}
-                </span>
-
-                <Button
-                  type="button"
-                  variant={ButtonVariant.QuantityAction}
-                  onClick={() => setQuantity((current) => current + 1)}
+                  variant={ButtonVariant.Primary}
+                  onClick={handleAddToCart}
                   disabled={addingToCart}
-                  ariaLabel="Increase quantity"
-                  className="!h-9 !w-9 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="!w-auto disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  +
+                  {addingToCart ? "Adding..." : "Add to Cart"}
                 </Button>
               </div>
-
-              <Button
-                type="button"
-                variant={ButtonVariant.Primary}
-                onClick={handleAddToCart}
-                disabled={addingToCart}
-                className="!w-auto disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {addingToCart ? "Adding..." : "Add to Cart"}
-              </Button>
             </div>
-          </div>
 
-          <div className="mt-5 rounded-lg bg-orange-50 p-4">
-            <p className="text-sm text-gray-600">
-              Total for {quantity} {quantity === 1 ? "item" : "items"}
+            <div className="mt-5 rounded-lg bg-orange-50 p-4">
+              <p className="text-sm text-gray-600">
+                Total for {quantity} {quantity === 1 ? "item" : "items"}
+              </p>
+
+              <p className="mt-1 text-2xl font-bold text-orange-600">
+                ₹{(product.price * quantity).toLocaleString("en-IN")}
+              </p>
+            </div>
+
+            {cartMessage && (
+              <p
+                role="status"
+                className={`mt-4 text-sm ${
+                  cartMessage.includes("successfully")
+                    ? "text-green-700"
+                    : "text-red-600"
+                }`}
+              >
+                {cartMessage}
+              </p>
+            )}
+
+            <p className="mt-4 text-xs text-gray-400">
+              Product ID: {product.id}
             </p>
-
-            <p className="mt-1 text-2xl font-bold text-orange-600">
-              ₹{(product.price * quantity).toLocaleString("en-IN")}
-            </p>
-          </div>
-
-          {cartMessage && (
-            <p
-              role="status"
-              className={`mt-4 text-sm ${
-                cartMessage.includes("successfully")
-                  ? "text-green-700"
-                  : "text-red-600"
-              }`}
-            >
-              {cartMessage}
-            </p>
-          )}
-
-          <p className="mt-4 text-xs text-gray-400">Product ID: {product.id}</p>
-        </section>
-      </div>
-    </main>
+          </section>
+        </div>
+      </main>
+    </>
   );
 }
 

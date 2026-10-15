@@ -6,6 +6,7 @@ import { ButtonVariant } from "../../enums/button";
 import { ProductCardVariant } from "../../enums/product";
 import type { AddToCartResult } from "../../types/cart";
 import type { Product } from "../../types/product";
+import { memo } from "react";
 
 interface ProductGridProps {
   products: Product[];
@@ -60,4 +61,4 @@ function ProductGrid({ products, loading, error, onRetry, onAddToCart }: Product
   );
 }
 
-export default ProductGrid;
+export default memo(ProductGrid);

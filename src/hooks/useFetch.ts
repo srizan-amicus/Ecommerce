@@ -21,10 +21,17 @@ function useFetch<T>(
   const [error, setError] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
+  const fetchFunctionRef = useRef(fetchFunction);
+  const mountedRef = useRef(false);
+
+  // Keep the latest request function available to execute().
+  useEffect(() => {
+    fetchFunctionRef.current = fetchFunction;
+  }, [fetchFunction]);
 
   const execute = useCallback(
     async (
-      request: FetchFunction<T> = fetchFunction,
+      request?: FetchFunction<T>,
       executeOptions: ExecuteOptions = {},
     ): Promise<boolean> => {
       const { silent = false } = executeOptions;
@@ -41,14 +48,14 @@ function useFetch<T>(
       setError(null);
 
       try {
-        const result = await request(controller.signal);
+        const currentRequest = request ?? fetchFunctionRef.current;
+        const result = await currentRequest(controller.signal);
 
         if (controller.signal.aborted) {
           return false;
         }
 
         setData(result);
-
         return true;
       } catch (error) {
         if (controller.signal.aborted) {
@@ -56,18 +63,33 @@ function useFetch<T>(
         }
 
         console.error("Fetch error:", error);
-
         setError("Could not load data. Please try again.");
-
         return false;
       } finally {
-        if (!controller.signal.aborted && !silent) {
-          setLoading(false);
+        if (
+          !controller.signal.aborted &&
+          abortControllerRef.current === controller
+        ) {
+          abortControllerRef.current = null;
+
+          if (!silent) {
+            setLoading(false);
+          }
         }
       }
     },
-    [fetchFunction],
+    [],
   );
+
+  useEffect(() => {
+    mountedRef.current = true;
+
+    return () => {
+      mountedRef.current = false;
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (!immediate) {
@@ -75,7 +97,7 @@ function useFetch<T>(
     }
 
     const controller = new AbortController();
-
+    abortControllerRef.current?.abort();
     abortControllerRef.current = controller;
 
     fetchFunction(controller.signal)
@@ -93,17 +115,24 @@ function useFetch<T>(
         }
 
         console.error("Fetch error:", error);
-
         setError("Could not load data. Please try again.");
       })
       .finally(() => {
-        if (!controller.signal.aborted) {
+        if (
+          !controller.signal.aborted &&
+          abortControllerRef.current === controller
+        ) {
+          abortControllerRef.current = null;
           setLoading(false);
         }
       });
 
     return () => {
       controller.abort();
+
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
     };
   }, [fetchFunction, immediate]);
 
